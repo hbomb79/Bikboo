@@ -30,8 +30,8 @@ staging:
     environment: staging
     script:
         - dpl --provider=heroku --app=staging-dyno --api-key=$HEROKU_STAGING_API_KEY
-    except:
-        - tags
+    only:
+        - staging
     dependencies:
         - bundle
 
@@ -42,6 +42,6 @@ production:
     script:
         - dpl --provider=heroku --app=testing-dyno --api-key=$HEROKU_STAGING_API_KEY
     only:
-        - tags
+        - master
     dependencies:
         - bundle
