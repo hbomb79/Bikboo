@@ -1,0 +1,47 @@
+image: ruby:2.4.2
+
+stages:
+    - rake
+    - deploy
+
+services:
+    - postgres
+
+cache:
+    paths:
+        - cache
+
+.job_template: &deploy
+    before_script:
+        - gem install dpl
+
+bundle:
+    stage: rake
+    script:
+        - apt-get update -qy
+        - apt-get install -y nodejs
+        - bundle install --path cache
+        - bundle exec rake db:create RAILS_ENV=test
+        - bundle exec rake test
+
+staging:
+    <<: *deploy
+    stage: deploy
+    environment: staging
+    script:
+        - dpl --provider=heroku --app=staging-dyno --api-key=$HEROKU_STAGING_API_KEY
+    except:
+        - tags
+    dependencies:
+        - bundle
+
+production:
+    <<: *deploy
+    stage: deploy
+    environment: production
+    script:
+        - dpl --provider=heroku --app=testing-dyno --api-key=$HEROKU_STAGING_API_KEY
+    only:
+        - tags
+    dependencies:
+        - bundle
