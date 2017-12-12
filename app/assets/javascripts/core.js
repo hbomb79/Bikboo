@@ -16,5 +16,3 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-
-console.log( "Included core.js" )

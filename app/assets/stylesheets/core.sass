@@ -12,7 +12,6 @@ a
     text-decoration: none
 
 .g-signin2
-    margin-top: 1rem
     display: inline-block
 
 .vertical-centre
@@ -33,6 +32,9 @@ a
     left: 50%
 
     -webkit-transform: translateX( -50% )
+    -ms-transform: translateX( -50% )
+    -o-transform: translateX( -50% )
+    transform: translateX( -50% )
 
 .container
     @extend .horizontal-centre
@@ -40,5 +42,6 @@ a
     width: 80%
     max-width: 1100px
 
-    .enforce-min
-        min-width: 500px
+.min-container
+    @extend .container
+    min-width: 500px

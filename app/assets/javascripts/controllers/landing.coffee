@@ -1,9 +1,19 @@
-# Require the core.js file, which will include some important scripts for us to use.
 #= require core
+#= require helpers/google_auth2
+#= require helpers/scroller
 
-# Require the google authentication helper; used later as a simple wrapper for
-# connecting to the OAuth2 via 'gapi'.
-#= require 'google_auth2'
+###
+    Controller specific coffeescript source (for LandingController).
+
+    This file configures the splash screen animations as well as
+    Google OAuth2 authentication integration (via GAuth2 class,
+    available on window).
+
+    Copyright (c) Harry Felton 2017
+###
+
+_replacePrompt = (animate) ->
+    #TODO: Fade out Google sign in prompt and replace with dashboard link when logged in
 
 # Define some listener methods which will help keep track of sign in changes.
 signInChange = (isSignedIn) ->
@@ -21,6 +31,7 @@ userChange = (user) ->
 # initalise the gapi.auth2 authinstance ASAP).
 auth = new GAuth2( signInChange, userChange, true )
 
-
+# Create a method that signs the user out of the gapi auth2
+# instance.
 @googleSignOut = ->
     auth.auth.signOut()
