@@ -12,7 +12,7 @@
 
 # Add click handler to body (listening for clicks on
 # a-tags that have 'data-scroll' set.)
-$( document ).ready ->
+$( document ).on "turbolinks:load", ->
     $( "body" ).on "click", "a[data-scroll]", ( event ) ->
         # When clicked, the value of 'data-scroll' is used as
         # a jQuery query string and passed to window.scrollToTarget
@@ -20,10 +20,7 @@ $( document ).ready ->
 
         scrollToTarget $( this ).attr("data-scroll"), Number $( this ).attr( "data-scroll-time" )
 
-
 $( window ).load ->
-    # Reset the scroll to 0 on page load.
-    #TODO: Implement anchor tags in URIs and scroll to them on page load
     setTimeout ->
         unless $( window.location.hash ).length
             $ 'html, body'

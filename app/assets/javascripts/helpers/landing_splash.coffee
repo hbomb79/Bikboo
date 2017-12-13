@@ -19,6 +19,21 @@ class @SplashHelper
                 @refreshGoogleIntegration @isSignedIn, user
             true )
 
+        $( document ).ready =>
+            do $ '#swapper-loader'
+                .show
+
+            $ '#learn-more'
+                .on 'click', (event) =>
+                    # Stop the link from travelling to the provided 'href'
+                    event.preventDefault()
+                    # Stop other click handlers (namely the scroller bind on
+                    # 'a[data-scroll]' (delegated to body) from catching this event)
+                    event.stopPropagation()
+
+                    do @revealMore
+
+
     refreshGoogleIntegration: (state, user) ->
         return console.error "Cannot refresh Google integration on splash screen -- no auth instance found" unless @authHelper
 
@@ -47,3 +62,8 @@ class @SplashHelper
                     .promise().then ->
                         @hide()
         , 150
+
+    revealMore: ->
+
+
+    concealMore: ->
