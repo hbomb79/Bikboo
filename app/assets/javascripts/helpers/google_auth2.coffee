@@ -28,6 +28,49 @@ class @GAuth2
             scope: 'profile'
         }
 
+        # gapi.signin2.render 'google', 'longtitle': true
+        $ '#google'
+            .on 'click', =>
+                console.log "Starting offline access exchange"
+                window.location.href = "/auth"
+
+                false
+
+                # @auth.grantOfflineAccess().then (payload) =>
+                #     #TODO: Disconnect user if grant fails and the user is not already disconnected
+                #     return console.error "Failed to grant offline access. May have to revoke user access" unless payload.code
+                #     console.log( payload )
+
+                #     $.ajax
+                #         type: 'POST'
+                #         url: '/auth/google/callback',
+
+                #         contentType: 'application/octet-stream; charset=utf-8'
+                #         headers:
+                #             'X-Requested-With': 'XMLHttpRequest'
+
+                #         processData: false
+                #         data: payload
+
+                #     .done (result) =>
+                #         #TODO
+                #         console.log( result )
+                #         console.log "SUCCESS"
+
+                #         window.location.href = "/dashboard"
+
+                #     .fail (result, statusText, jqXHR) =>
+                #         console.log( jqXHR )
+                #         console.warn "Failed to grant offline access. Server response FAILURE (#{result.status}: #{statusText})."
+                #         if @auth.isSignedIn.get()
+                #             console.warn "Revoking Google user authentication"
+                #             # @auth.signOut()
+
+                #             alert "[NYI] FAILED to process Google authentication (could not validate grantOfflineAccess token on server). Got '#{result.status}: #{statusText}' back from server"
+
+                #     return false
+
+
         # If for some reason this didn't work, bail out
         return console.error 'No auth instance. Platform failed to load. gapi-auth2' unless @auth
 
