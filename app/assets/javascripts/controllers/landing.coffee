@@ -12,9 +12,5 @@
     Copyright (c) Harry Felton 2017
 ###
 
-@splash = new SplashHelper
-
-# Create a method that signs the user out of the gapi auth2
-# instance.
-@googleSignOut = ->
-    @splash.authHelper.auth.signOut()
+$( document ).ready =>
+    @notices = new Notices
