@@ -1,5 +1,19 @@
+###
+    A basic class that handles the processing,
+    and display of notices.
+
+    Notices can be queued manually, however this
+    class is usually called by embedded Javascript
+    created automatically based on 'flash' messages
+    passed from rails
+
+    Copyright (c) Harry Felton 2017
+###
+
 class @Notices
-    constructor: (@notices=[]) ->
+    constructor: ->
+        @notices = []
+
         $( document )
             .on 'mouseenter', 'div#flash-notices .notice', =>
                 @showCurrent true
@@ -8,20 +22,16 @@ class @Notices
             .on "click", "div#flash-notices .notice #notice-close", (event) =>
                 @hideCurrent()
 
-        do @showCurrent if @notices.length
-
         $( document ).on "turbolinks:load", =>
             @$noticeContainer = $ "#flash-notices"
             @$notice = @$noticeContainer.find ".notice" if @$noticeContainer
 
-            if @notices.length
-                console.log "Popping current notification from previous page to prevent misleading notifications"
-                @popCurrent()
+            @popCurrent() if @notices.length
 
             $( document ).trigger 'notices:ready', this
 
     queue: (notice, isAlert) ->
-        @notices.push [ notice, isAlert and 'alert' or 'notice' ]
+        @notices.push [ notice, isAlert ]
         @showCurrent()
 
     showCurrent: (noTimeout) ->
@@ -38,7 +48,7 @@ class @Notices
         $notice.find "p"
             .text @notices[ 0 ][ 0 ]
 
-        $notice[ @notices[ 0 ][ 1 ] is 'alert' and 'addClass' or 'removeClass' ] 'alert'
+        $notice[ @notices[ 0 ][ 1 ] and 'addClass' or 'removeClass' ] 'alert'
 
         $noticeContainer.attr 'data-no-interrupt', 'true'
         $noticeContainer.stop( true ).animate( marginTop: -$noticeContainer.outerHeight(), 300 ).promise().done =>
