@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
-  get 'welcome/index'
-  get 'index', controller: :welcome
-  root "welcome#index"
+    # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 
-  resources :articles do
-  	resources :comments
-  end
+    get '/auth/google/callback', to: 'sessions#create'
+    get '/auth/failure', to: 'sessions#failure'
+
+    get '/signin', to: redirect( path: '/auth/google' )
+    get '/signout', to: 'sessions#destroy'
+
+    root 'landing#index'
 end
