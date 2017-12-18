@@ -14,9 +14,5 @@ module HerokuApp
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
-
-    # Make rails use SASS syntax instead of SCSS syntax.
-    # Purely because I personally prefer the cleaner syntax
-    config.sass.preferred_syntax = :sass
   end
 end
