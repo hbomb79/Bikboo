@@ -42,7 +42,6 @@ class SessionsController < ApplicationController
 
                 flash.notice = "Signed in!"
             else
-                puts "[FATAL] Failure: While an authorization was found for this provider (#{omniauth['provider']}) and uid, we could not find the referenced Bikboo user account (user_id: #{@auth.user_id}). This indicates an underlying failure with the database, destroying authorization."
                 @auth.destroy!
 
                 flash.alert = "Unable to sigin. Dwindling authentication methods. Please try again"
@@ -55,7 +54,7 @@ class SessionsController < ApplicationController
             if not verify_google_email
                 # Reject new sesssion! The Google email provided has not been verified
                 flash.alert = "Failed to signup. Email address (#{omniauth['info']['email']}) has not been verified. Please verify this email on Google and retry"
-            elsif User.where( email: omniauth['info']['email'] )
+            elsif User.where( email: omniauth['info']['email'] ).first
                 # The email is already attached to an account. Reject this
                 # sign in attempt (TODO: provide a user fix for this, there's no
                 # way to sign in to their account if this clause is executed).
