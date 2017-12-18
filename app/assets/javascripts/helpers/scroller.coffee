@@ -10,15 +10,13 @@
             scrollTop: $( target ).offset().top or 0
             time or 750
 
-# Add click handler to body (listening for clicks on
-# a-tags that have 'data-scroll' set.)
-$( document ).on "turbolinks:load", ->
-    $( "body" ).on "click", "a[data-scroll]", ( event ) ->
-        # When clicked, the value of 'data-scroll' is used as
-        # a jQuery query string and passed to window.scrollToTarget
-        do event.preventDefault if event
 
-        scrollToTarget $( this ).attr("data-scroll"), Number $( this ).attr( "data-scroll-time" )
+# Assign some jQuery event handlers to facilitate
+# scrolling on click handlers.
+$( document ).on "click", "a[data-scroll]", ( event ) ->
+    do event.preventDefault if event
+
+    scrollToTarget $( this ).attr("data-scroll"), Number $( this ).attr( "data-scroll-time" )
 
 $( window ).load ->
     setTimeout ->

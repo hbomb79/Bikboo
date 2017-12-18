@@ -64,3 +64,6 @@ class @Notices
         @notices.shift()
         @showCurrent()
 
+
+$( document ).ready =>
+    @notices = new Notices
