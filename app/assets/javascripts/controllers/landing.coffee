@@ -20,3 +20,6 @@
     @googleSignOut = ->
         return console.error "Cannot sign out Google user. Authentication wrapper is unavailable (perhaps the Google API failed to load)." unless typeof @splash.authHelper.auth.signOut is 'function'
         @splash.authHelper.auth.signOut()
+
+$( document ).ready =>
+    @notices = new Notices
