@@ -31,7 +31,7 @@ class SessionsController < ApplicationController
         info = omniauth['info']['email']
 
         continue_url = request.env['omniauth.params']['continue']
-        redirect_path = (url_absolute? continue_url) ? '/' : continue_url
+        redirect_path = (url_absolute? continue_url) ? '/' : ( continue_url or "/" )
 
         @auth = Authorization.where( provider: omniauth['provider'], uid: omniauth['uid'] ).first
         if @auth
