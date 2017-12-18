@@ -35,12 +35,12 @@ class SessionsController < ApplicationController
                 session[:user_id] = @auth.user_id
 
                 redirect_to '/'
-                flash.now.notice = "Signed in!"
+                flash.notice = "Signed in!"
             else
                 puts "[FATAL] Failure: While an authorization was found for this provider (#{omniauth['provider']}) and uid, we could not find the referenced Bikboo user account (user_id: #{@auth.user_id}). This indicates an underlying failure with the database, destroying authorization."
                 @auth.destroy!
 
-                flash.now.alert = "Unable to sigin. Dwindling authentication methods. Please try again"
+                flash.alert = "Unable to sigin. Dwindling authentication methods. Please try again"
             end
         else
             # No authorization found. Sign up using the details provided by the provider
@@ -49,12 +49,12 @@ class SessionsController < ApplicationController
             # and that the email in question is valid.
             if not verify_google_email
                 # Reject new sesssion! The Google email provided has not been verified
-                flash.now.alert = "Failed to signup. Email address (#{omniauth['info']['email']}) has not been verified. Please verify this email on Google and retry"
+                flash.alert = "Failed to signup. Email address (#{omniauth['info']['email']}) has not been verified. Please verify this email on Google and retry"
             elsif User.where( email: omniauth['info']['email'] )
                 # The email is already attached to an account. Reject this
                 # sign in attempt (TODO: provide a user fix for this, there's no
                 # way to sign in to their account if this clause is executed).
-                flash.now.alert = "Unable to sign up; email address is already in use."
+                flash.alert = "Unable to sign up; email address is already in use."
             else
                 # No user exists with this email, and the email is verified. Create a new user.
                 user = User.create( email: omniauth['info']['email'], name: omniauth['info']['name'] )
@@ -66,12 +66,12 @@ class SessionsController < ApplicationController
                         session[:user_id] = new_auth.user_id
                         redirect_to '/'
 
-                        flash.now.notice = "Signed up and logged in. Welcome!"
+                        flash.notice = "Signed up and logged in. Welcome!"
                     else
-                        flash.now.alert = "Failed to signup, server error. Please try again later"
+                        flash.alert = "Failed to signup, server error. Please try again later"
                     end
                 else
-                    flash.now.alert = "Failed to signup, server error. Please try again later"
+                    flash.alert = "Failed to signup, server error. Please try again later"
                 end
             end
         end
@@ -84,6 +84,8 @@ class SessionsController < ApplicationController
     def destroy
         session[:user_id] = nil
         redirect_to '/'
+
+        flash.notice = "Signed out!"
     end
 
 private
