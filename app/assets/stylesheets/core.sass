@@ -1,0 +1,101 @@
+/*  The core CSS file. Mainly handles setting common styles application wide
+    Also handles setting of variables and basic web application structuring
+
+    Copyright (c) Harry Felton 2017 */
+
+@import 'partials/variables'
+@import 'partials/reset'
+@import 'partials/structure'
+@import 'partials/notices'
+
+a
+    color: white
+    text-decoration: none
+
+.button
+    font-family: 'Segoe UI', 'Roboto', arial, sans-serif
+    background-color: #0083dc
+    padding: 0px 13px
+    border-radius: 4px
+    color: white
+    box-shadow: 0px 3px 17px -8px black
+
+    font-size: 14px
+
+    -webkit-transition: all .04s ease
+    -o-transition: all .04s ease
+    transition: all .04s ease
+
+    text-transform: uppercase
+    letter-spacing: .025em
+
+    display: inline-block
+
+    height: 37px
+    line-height: 37px
+
+    font-weight: 600
+
+    &:hover, &:active
+        box-shadow: 0px 3px 17px -6px black
+        transform: translateY(-1px)
+
+    &:active
+        background-color: #0077c7
+
+.google-auth-link
+    display: inline-block
+    width: 180px
+
+    img
+        width: 100%
+
+.vertical-centre
+    position: absolute
+    top: 50%
+
+    -webkit-transform: translateY( -50% )
+    -ms-transform: translateY( -50% )
+    -o-transform: translateY( -50% )
+    transform: translateY( -50% )
+
+.horizontal-centre
+    margin: 0 auto
+
+.abs-horizontal-centre
+    @extend .horizontal-centre
+    position: absolute
+    left: 50%
+
+    -webkit-transform: translateX( -50% )
+    -ms-transform: translateX( -50% )
+    -o-transform: translateX( -50% )
+    transform: translateX( -50% )
+
+.container
+    @extend .horizontal-centre
+
+    width: 80%
+    max-width: 1100px
+
+.min-container
+    @extend .container
+    min-width: 500px
+
+=keyframes($name)
+    @-webkit-keyframes #{$name}
+        @content
+    @-moz-keyframes #{$name}
+        @content
+    @-ms-keyframes #{$name}
+        @content
+    @keyframes #{$name}
+        @content
+
++keyframes(opacity-pulse)
+    0%
+        opacity: 1
+    50%
+        opacity: 0
+    100%
+        opacity: 1
