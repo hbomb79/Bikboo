@@ -28,7 +28,7 @@ class SessionsController < ApplicationController
     def create
         # First, check if an Authorization exists for this uid and provider.
         omniauth = request.env['omniauth.auth']
-        info = omniauth['info']['email']
+        info = omniauth['info']
 
         continue_url = request.env['omniauth.params']['continue']
         redirect_path = (url_absolute? continue_url) ? '/' : ( continue_url or "/" )
@@ -53,15 +53,15 @@ class SessionsController < ApplicationController
             # and that the email in question is valid.
             if not verify_google_email
                 # Reject new sesssion! The Google email provided has not been verified
-                flash.alert = "Failed to signup. Email address (#{omniauth['info']['email']}) has not been verified. Please verify this email on Google and retry"
-            elsif User.where( email: omniauth['info']['email'] ).first
+                flash.alert = "Failed to signup. Email address (#{info['email']}) has not been verified. Please verify this email on Google and retry"
+            elsif User.where( email: info['email'] ).first
                 # The email is already attached to an account. Reject this
                 # sign in attempt (TODO: provide a user fix for this, there's no
                 # way to sign in to their account if this clause is executed).
                 flash.alert = "Unable to sign up; email address is already in use."
             else
                 # No user exists with this email, and the email is verified. Create a new user.
-                user = User.create( email: omniauth['info']['email'], name: omniauth['info']['name'] )
+                user = User.create( email: info['email'], name: info['name'], image_url: info['image'] )
                 if user and not user.new_record?
                     # Created and saved user. Create a authorization attached to this user
                     new_auth = Authorization.create( uid: omniauth['uid'], provider: omniauth['provider'], user_id: user.id )
