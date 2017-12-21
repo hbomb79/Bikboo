@@ -41,7 +41,7 @@ class SessionsController < ApplicationController
             # If we found an authorization, then sign in the user attached (user_id)
             user = User.where( id: @auth.user_id ).first
             if user
-                signin_user user: user, provider: provider, uid: uid
+                signin_user user
 
                 flash.notice = "Signed in!"
             else
@@ -70,7 +70,7 @@ class SessionsController < ApplicationController
                     new_auth = Authorization.create( uid: uid, provider: provider, user_id: user.id )
 
                     if new_auth and not new_auth.new_record?
-                        signin_user user: user, provider: provider, uid: uid
+                        signin_user user
 
                         flash.notice = "Signed up and logged in. Welcome!"
                     else
@@ -107,23 +107,13 @@ private
     # Sign in the user object passed
     # by issuing (or generating) an access
     # token for that user.
-    def signin_user( user: false, provider: false, uid: false )
-        raise "Invalid arguments passed. Expected 'user' model instance, 'provider' string and 'uid' string. Refusing to sign in user." unless( user and provider and uid )
+    def signin_user( user )
+        raise "Invalid arguments passed. Expected 'user' model instance. Refusing to sign in user." unless user
 
-        # To signin a user, we must assign a :user_id, :provider, :uid and :auth_token
-        # * The :user_id represents the ID of the signed in user.
-        # * The :provider and :uid can be used with the :user_id to find the authentication method used
-        # * The :auth_token is randomly generated. If it doesn't match the token stored against the users
-        #   details then it has been revoked - the session is no longer valid.
-
-        if not user.auth_token
-            user.generate_auth_token
-        end
+        user.generate_auth_token unless user.auth_token
 
         reset_session
         session[:auth_token] = user.auth_token
         session[:user_id] = user.id
-        session[:provider] = provider
-        session[:uid] = uid
     end
 end
