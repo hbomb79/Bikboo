@@ -2,6 +2,8 @@ class ApplicationController < ActionController::Base
     SITE_NAME = "Bikboo"
     protect_from_forgery with: :exception
 
+    before_action :validate_session
+
 private
     ##
     # Redirects the user to the signin page (root [/]), with a 'continue'
@@ -33,6 +35,26 @@ private
 
     def current_user
         @user ||= User.where( id: session[:user_id] ).first if session[:user_id]
+    end
+
+    ##
+    # A session is automatically invalidated (the user is logged out)
+    # if the auth_token in the session does not match the auth_token
+    # in the database that's attached to the user_id
+    def validate_session
+        user_id = session[:user_id]
+        auth_token = session[:auth_token]
+
+        if user_id and auth_token
+            user = User.where( id: user_id ).first
+            unless user and user.auth_token == auth_token
+                reset_session
+                
+                redirect_to '/', alert: "Session invalidated; your user has been logged out of all devices. Please log in again."
+            end
+        elsif user_id or auth_token
+            reset_session
+        end
     end
 
     helper_method :current_user, :url_absolute?
