@@ -1,4 +1,5 @@
 class ProjectsController < ApplicationController
+    before_action :require_login
     layout 'users'
 
     def index
