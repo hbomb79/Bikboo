@@ -36,18 +36,16 @@ class SessionsController < ApplicationController
         provider = omniauth['provider']
         uid = omniauth['uid']
 
-        @auth = Authorization.where( provider: provider, uid: uid ).first
+        @auth = Authorization.find_by_provider_and_uid provider, uid
         if @auth
-            # If we found an authorization, then sign in the user attached (user_id)
-            user = User.where( id: @auth.user_id ).first
-            if user
+            begin
+                user = User.find @auth.user_id
                 signin_user user
 
                 flash.notice = "Signed in!"
-            else
+            rescue ActiveRecord::RecordNotFound
                 @auth.destroy!
-
-                flash.alert = "Unable to sigin. Dwindling authentication methods. Please try again"
+                flash.alert = "Unable to sigin. Authorization points to missing user account. Please try again now that dwindling authentications have been destroyed."
             end
         else
             # No authorization found. Sign up using the details provided by the provider
@@ -57,7 +55,7 @@ class SessionsController < ApplicationController
             if not verify_google_email
                 # Reject new sesssion! The Google email provided has not been verified
                 flash.alert = "Failed to signup. Email address (#{info['email']}) has not been verified. Please verify this email on Google and retry"
-            elsif User.where( email: info['email'] ).first
+            elsif User.find_by_email info['email']
                 # The email is already attached to an account. Reject this
                 # sign in attempt (TODO: provide a user fix for this, there's no
                 # way to sign in to their account if this clause is executed).
@@ -82,7 +80,7 @@ class SessionsController < ApplicationController
             end
         end
 
-        redirect_to redirect_path
+        redirect_to flash.alert ? root_url : redirect_path
     end
 
     ##

@@ -34,7 +34,7 @@ private
     end
 
     def current_user
-        @user ||= User.where( id: session[:user_id] ).first if session[:user_id]
+        @user ||= User.find session[:user_id] if session[:user_id]
     end
 
     ##
@@ -46,7 +46,9 @@ private
         auth_token = session[:auth_token]
 
         if user_id and auth_token
-            user = User.where( id: user_id ).first
+            # Use find_by_id to avoid ActiveRecord::RecordNotFound exception
+            user = User.find_by_id user_id
+
             unless user and user.auth_token == auth_token
                 reset_session
                 
