@@ -1,16 +1,5 @@
 class SessionsController < ApplicationController
     ##
-    # Rendering a new session 'form' is much the same as simply
-    # logging the user in via OAuth.
-    #
-    # Paths that might render such an action are instead redirected
-    # to /auth/google -- where the OAuth flow begins
-    #
-    # Once the flow completes (and is successful), the 'create' action
-    # will be executed.
-    def new; end
-
-    ##
     # The OAuth flow was successful, we are now authenticated
     # with a provider (Google).
     #
