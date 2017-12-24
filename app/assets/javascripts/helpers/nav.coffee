@@ -16,12 +16,6 @@ _missHandler = (event) ->
             opacity: 1
         , 100
 
-    $ 'nav a#profile span'
-        .stop true
-        .animate
-            marginTop: '3px'
-        , 100
-
     $( document ).mouseup _missHandler
 
 @closeProfileModal = ->
@@ -34,12 +28,6 @@ _missHandler = (event) ->
         , 100
         .promise().then ->
             this.hide()
-
-    $ 'nav a#profile span'
-        .stop true
-        .animate
-            marginTop: 0
-        , 100
 
     $( document ).unbind 'mouseup', _missHandler
 
