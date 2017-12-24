@@ -5,7 +5,7 @@ nav
     box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.38)
 
     height: $nav-height
-    overflow: hidden
+    // overflow: hidden
 
     &.fixed
         position: fixed
@@ -14,7 +14,9 @@ nav
         top: 0
 
     .container
-        a
+        position: relative
+
+        a:not(.button)
             display: inline-block
             line-height: $nav-height
             padding: 0 1rem
@@ -31,3 +33,17 @@ nav
 
             &.right
                 float: right
+
+            &#profile
+                img
+                    display: inline-block
+                    height: $nav-height
+                    padding: 11px 1px
+                    border-radius: 50%
+                    float: left
+
+                span
+                    font-size: 13px
+                    color: #0070a5
+                    
+        @import 'partials/profile_modal'
