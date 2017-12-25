@@ -9,5 +9,7 @@ Rails.application.routes.draw do
 
     get '/dashboard', to: 'users#show'
 
+    resources :projects
+
     root 'landing#index'
 end

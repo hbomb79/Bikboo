@@ -1,16 +1,5 @@
 class SessionsController < ApplicationController
     ##
-    # Rendering a new session 'form' is much the same as simply
-    # logging the user in via OAuth.
-    #
-    # Paths that might render such an action are instead redirected
-    # to /auth/google -- where the OAuth flow begins
-    #
-    # Once the flow completes (and is successful), the 'create' action
-    # will be executed.
-    def new; end
-
-    ##
     # The OAuth flow was successful, we are now authenticated
     # with a provider (Google).
     #
@@ -28,23 +17,24 @@ class SessionsController < ApplicationController
     def create
         # First, check if an Authorization exists for this uid and provider.
         omniauth = request.env['omniauth.auth']
-        info = omniauth['info']['email']
+        info = omniauth['info']
 
         continue_url = request.env['omniauth.params']['continue']
         redirect_path = (url_absolute? continue_url) ? '/' : ( continue_url or "/" )
 
-        @auth = Authorization.where( provider: omniauth['provider'], uid: omniauth['uid'] ).first
+        provider = omniauth['provider']
+        uid = omniauth['uid']
+
+        @auth = Authorization.find_by_provider_and_uid provider, uid
         if @auth
-            # If we found an authorization, then sign in the user attached (user_id)
-            user = User.where( id: @auth.user_id ).first
-            if user
-                session[:user_id] = @auth.user_id
+            begin
+                user = User.find @auth.user_id
+                signin_user user
 
                 flash.notice = "Signed in!"
-            else
+            rescue ActiveRecord::RecordNotFound
                 @auth.destroy!
-
-                flash.alert = "Unable to sigin. Dwindling authentication methods. Please try again"
+                flash.alert = "Unable to sigin. Authorization points to missing user account. Please try again now that dwindling authentications have been destroyed."
             end
         else
             # No authorization found. Sign up using the details provided by the provider
@@ -53,21 +43,21 @@ class SessionsController < ApplicationController
             # and that the email in question is valid.
             if not verify_google_email
                 # Reject new sesssion! The Google email provided has not been verified
-                flash.alert = "Failed to signup. Email address (#{omniauth['info']['email']}) has not been verified. Please verify this email on Google and retry"
-            elsif User.where( email: omniauth['info']['email'] ).first
+                flash.alert = "Failed to signup. Email address (#{info['email']}) has not been verified. Please verify this email on Google and retry"
+            elsif User.find_by_email info['email']
                 # The email is already attached to an account. Reject this
                 # sign in attempt (TODO: provide a user fix for this, there's no
                 # way to sign in to their account if this clause is executed).
                 flash.alert = "Unable to sign up; email address is already in use."
             else
                 # No user exists with this email, and the email is verified. Create a new user.
-                user = User.create( email: omniauth['info']['email'], name: omniauth['info']['name'] )
+                user = User.create( email: info['email'], name: info['name'], image_url: info['image'] )
                 if user and not user.new_record?
                     # Created and saved user. Create a authorization attached to this user
-                    new_auth = Authorization.create( uid: omniauth['uid'], provider: omniauth['provider'], user_id: user.id )
+                    new_auth = Authorization.create( uid: uid, provider: provider, user_id: user.id )
 
                     if new_auth and not new_auth.new_record?
-                        session[:user_id] = new_auth.user_id
+                        signin_user user
 
                         flash.notice = "Signed up and logged in. Welcome!"
                     else
@@ -79,7 +69,7 @@ class SessionsController < ApplicationController
             end
         end
 
-        redirect_to redirect_path
+        redirect_to flash.alert ? root_url : redirect_path
     end
 
     ##
@@ -87,10 +77,8 @@ class SessionsController < ApplicationController
     #
     # * redirects user to root
     def destroy
-        session[:user_id] = nil
-        redirect_to '/'
-
-        flash.notice = "Signed out!"
+        reset_session
+        redirect_to '/', notice: 'Signed out'
     end
 
 private
@@ -100,5 +88,19 @@ private
     def verify_google_email
         omniauth = request.env['omniauth.auth']
         omniauth['provider'] != 'google' or omniauth['extra']['id_info']['email_verified']
+    end
+
+    ##
+    # Sign in the user object passed
+    # by issuing (or generating) an access
+    # token for that user.
+    def signin_user( user )
+        raise "Invalid arguments passed. Expected 'user' model instance. Refusing to sign in user." unless user
+
+        user.generate_auth_token unless user.auth_token
+
+        reset_session
+        session[:auth_token] = user.auth_token
+        session[:user_id] = user.id
     end
 end

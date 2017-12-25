@@ -17,3 +17,4 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require helpers/notices
+//= require helpers/scroller
