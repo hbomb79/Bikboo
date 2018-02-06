@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     get '/dashboard', to: 'users#show'
 
     resources :projects
+    resources :notifications, only: [:index, :update, :destroy]
 
     root 'landing#index'
 end
