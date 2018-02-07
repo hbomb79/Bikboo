@@ -18,23 +18,23 @@ class User < ApplicationRecord
     # If the user has recent activity to show, it is returned.
     #
     # If not, boolean 'false' is returned.
-    def recent_activity
+    def recent_activity( limit: 10, offset: 0 )
         return @recent if @recent and @recent.any?
 
-        latest_activity = get_activity
+        latest_activity = get_activity( limit: limit, offset: offset )
 
         # Filter out non-recent activity
-        recent = latest_activity.where( "created_at >= ? ", Time.zone.now - 20.days )
+        recent = latest_activity.where( "created_at >= ? ", Time.zone.now - 1.week )
 
         @recent = recent.any? ? recent : false
     end
 
     ##
-    # Returns a maximum of 20 activity entries, starting at the offset given
+    # Returns a maximum of 10 activity entries, starting at the offset given
     # (if not given, starts at zero)
     #
     # This facilitates the 'Load more' functionality in the dashboard 'Recent Activity' pane.
-    def get_activity( offset: 0 )
-        Notification.offset( offset ).order( created_at: :desc ).limit( 20 )
+    def get_activity( offset: 0, limit: 10 )
+        Notification.offset( offset ).order( created_at: :desc ).limit( limit )
     end
 end

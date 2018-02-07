@@ -12,9 +12,19 @@ class NotificationsController < ApplicationController
     # currently signed in user.
     #
     # If no user is signed in, the request will fail.
-    # This failure is handled by the classes before_action.
+    # This failure is handled by the classes 'before_action'.
     def index
-        render :json => current_user.notifications, status: :ok
+        render :json => construct_payload( get_activity ), status: :ok
+    end
+
+    ##
+    # Similar to 'index', however only the recent notifications
+    # are returned.
+    #
+    # If no user is signed in, the request will fail.
+    # This failure is handled by the classes 'before_action'.
+    def recent
+        render :json => construct_payload( get_activity( recent: true ), extra: { recent_only: true } ), status: :ok
     end
 
     ##
@@ -50,9 +60,31 @@ class NotificationsController < ApplicationController
     end
 
 private
+    ##
+    # Used by the classes 'before_action' to ensure a user is signed in.
+    #
+    # If not, the request is rejected with status 401.
     def require_login
         unless current_user
             render :json => { error: "Unauthorized request" }, status: :unauthorized
         end
+    end
+
+    ##
+    # A wrapper to get the activity of the user, factoring in the
+    # URL params (limit and offset).
+    def get_activity( recent: false )
+        current_user.send( recent ? 'recent_activity' : 'activity', limit: params[:limit], offset: params[:offset] )
+    end
+
+    ##
+    # Constructs the payload by merging the provided payload
+    # with information about the users notifications (such as total).
+    #
+    # If 'extra' is provided, that is also merged in to the 
+    # payload.
+    def construct_payload( payload, extra: false )
+        export = { payload: payload }.merge( extra || {} )
+        export.merge( { total_notifications: current_user.notifications.count, amount_provided: payload.count } )
     end
 end
