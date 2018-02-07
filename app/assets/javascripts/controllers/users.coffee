@@ -18,8 +18,13 @@ $( document ).ready ->
 
         .on "ajax:success", delegatedTarget, (event, data, status, xhr) ->
             $( event.target ).parents ".notification"
-                .slideUp( 300 ).promise().done ->
-                    $( this ).remove()
+                .animate
+                    marginLeft: '100%',
+                    opacity: 0
+                , 200
+                .promise().done ->
+                    $( this ).slideUp( 100 ).promise().done ->
+                        $( this ).remove()
 
         .on "ajax:error", delegatedTarget, (event, xhr, status, error) ->
             console.error "FAILED to destroy notification"
