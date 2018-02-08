@@ -18,13 +18,13 @@ class User < ApplicationRecord
     # If the user has recent activity to show, it is returned.
     #
     # If not, boolean 'false' is returned.
-    def recent_activity( limit: 10, offset: 0 )
+    def get_recent_activity( limit: 10, offset: 0 )
         return @recent if @recent and @recent.any?
 
         latest_activity = get_activity( limit: limit, offset: offset )
 
         # Filter out non-recent activity
-        recent = latest_activity.where( "created_at >= ? ", Time.zone.now - 1.week )
+        recent = latest_activity.where( "created_at >= ? ", Time.zone.now - 1.hour )
 
         @recent = recent.any? ? recent : false
     end
