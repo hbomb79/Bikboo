@@ -55,6 +55,7 @@ class ActivityPane
             return if @cache.loaded is @cache.total
             if ( notifPanel.innerHeight() - notifWrapper.scrollTop() ) <= ( notifWrapper.innerHeight() + 10 )
                 # The user has scrolled to the absolute bottom (or is 10px away). Load more content.
+                @recentMode = false
                 do @loadMore
 
         do @loadMore
