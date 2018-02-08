@@ -24,7 +24,7 @@ class User < ApplicationRecord
         latest_activity = get_activity( limit: limit, offset: offset )
 
         # Filter out non-recent activity
-        recent = latest_activity.where( "created_at >= ? ", Time.zone.now - 1.hour )
+        recent = latest_activity.where( "created_at >= ? ", 1.week.ago )
 
         @recent = recent.any? ? recent : false
     end
