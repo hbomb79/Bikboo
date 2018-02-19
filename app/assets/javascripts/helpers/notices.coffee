@@ -22,13 +22,16 @@ class @Notices
             .on "click", "div#flash-notices .notice #notice-close", (event) =>
                 @hideCurrent()
 
-        $( document ).on "turbolinks:load", =>
+        $( document ).ready =>
             @$noticeContainer = $ "#flash-notices"
             @$notice = @$noticeContainer.find ".notice" if @$noticeContainer
 
             @popCurrent() if @notices.length
 
-            $( document ).trigger 'notices:ready', this
+            window.addEventListener 'load', =>
+                $( document ).trigger 'notices:ready', this
+            , false
+
 
     queue: (notice, isAlert) ->
         @notices.push [ notice, isAlert ]
@@ -50,14 +53,17 @@ class @Notices
 
         $notice[ @notices[ 0 ][ 1 ] and 'addClass' or 'removeClass' ] 'alert'
 
+        return if $noticeContainer.hasClass "showing"
         $noticeContainer.attr 'data-no-interrupt', 'true'
         $noticeContainer.stop( true ).animate( marginTop: -$noticeContainer.outerHeight(), 300 ).promise().done =>
+            $noticeContainer.addClass "showing"
             $noticeContainer.attr 'data-no-interrupt', 'false'
 
     hideCurrent: =>
         @$noticeContainer.attr 'data-no-interrupt', 'true'
         @$noticeContainer.stop( true ).animate( marginTop: 0, 300 ).promise().done =>
             @$noticeContainer.attr 'data-no-interrupt', 'false'
+            @$noticeContainer.removeClass "showing"
             @popCurrent()
 
     popCurrent: ->
