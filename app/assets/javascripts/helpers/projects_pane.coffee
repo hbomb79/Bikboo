@@ -11,13 +11,13 @@ class @ProjectsPane
 
         placeholder = ".column#projects .wrapper .panel#projects .project.placeholder"
         $ "body"
-            .on "click", "#{placeholder} .placeholder-close", (event) =>
+            .on "click", "#{placeholder} .placeholder-close:not(.disabled)", (event) =>
                 do @removePlaceholder
             .on "click", "#{placeholder} #new-help", (event) =>
                 do @revealPlaceholderHelp
             .on "click", "#{placeholder} #close-help", (event) =>
                 do @hidePlaceholderHelp
-            .on "click", "#{placeholder} .placeholder-save", (event) =>
+            .on "click", "#{placeholder} .placeholder-save:not(.loading)", (event) =>
                 do @pushPlaceholder
 
     ##
@@ -30,9 +30,9 @@ class @ProjectsPane
     refresh: ->
         $wrapper = $ ".column#projects .wrapper"
         $panel = $wrapper.find ".panel#projects"
-        projectCount = $panel.find(".project:not(.hidden):not(.to-hide)").length
+        projectCount = $panel.find(".project:not(.hidden):not(.hiding)").length
 
-        $wrapper.find ".notice, .loading"
+        $wrapper.find ".notice"
             .fadeOut 250
 
         if projectCount and not $panel.hasClass "open"
@@ -97,12 +97,17 @@ class @ProjectsPane
     # to the user.
     pushPlaceholder: ->
         # TODO
-        $panel = $ ".column#projects .wrapper .panel#projects"
-        # $panel.find ".project.placeholder .loading-overlay"
-        #     .fadeIn( 150 )
+        $placeholder = $ ".column#projects .wrapper .panel#projects .project.placeholder"
 
-        $panel.find ".project.placeholder input, .project.placeholder textarea"
+        $placeholder.find "input, textarea"
             .attr "disabled", true
+
+        $placeholder.find ".button.placeholder-save"
+            .addClass "loading inplace"
+
+        $placeholder.find ".button.placeholder-close"
+            .addClass "disabled"
+
 
     ##
     # Remove placeholder
