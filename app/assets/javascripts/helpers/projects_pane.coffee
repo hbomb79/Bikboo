@@ -96,17 +96,42 @@ class @ProjectsPane
     # The newly created project will be highlighted briefly to indicate a success
     # to the user.
     pushPlaceholder: ->
-        # TODO
         $placeholder = $ ".column#projects .wrapper .panel#projects .project.placeholder"
+        data = $placeholder.find("form").serialize()
 
         $placeholder.find "input, textarea"
             .attr "disabled", true
-
         $placeholder.find ".button.placeholder-save"
             .addClass "loading inplace"
-
         $placeholder.find ".button.placeholder-close"
             .addClass "disabled"
+
+        #TODO: Actually send form data
+        $.ajax
+            url: '/projects'
+            dataType: 'json'
+            method: 'POST'
+            data: data
+            complete: (event) =>
+                console.log "complete"
+                $placeholder.find "input, textarea"
+                    .attr "disabled", false
+                $placeholder.find ".button.placeholder-save"
+                    .removeClass "loading inplace"
+                $placeholder.find ".button.placeholder-close"
+                    .removeClass "disabled"
+
+            success: (payload, state, xhr) =>
+                console.log "SUCCESS"
+                console.log payload
+                console.log state
+
+            error: (xhr, state, display) =>
+                console.error "Ajax error while pushing new project. #{state}, #{display}. XHR dump follows"
+                console.debug xhr
+
+                response = xhr.responseJSON
+                notices.queue( "Unable to create new project: #{response and response.error or display} (#{xhr.status})", true )
 
 
     ##
