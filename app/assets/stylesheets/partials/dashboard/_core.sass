@@ -80,14 +80,11 @@
     main
         @extend .abs-stretch
         min-width: $minContainerWidth
-        padding: 0 1rem
 
         top: $bannerHeight
 
         .column
-            position: absolute
-            top: 0
-            bottom: 0
+            position: relative
 
         @import 'partials/dashboard/projects'
         @import 'partials/dashboard/activity'
