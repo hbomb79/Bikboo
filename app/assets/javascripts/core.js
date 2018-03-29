@@ -17,3 +17,9 @@
 //= require jquery_ujs
 //= require helpers/notices
 //= require helpers/scroller
+
+$(document).ready(function(){
+    $(".google-auth-link").on( "click", function(){
+        $(this).addClass( "loading inplace" );
+    });
+});
