@@ -80,17 +80,16 @@ class @ActivityPane
                 .stop( true ).fadeIn( 250 )
                 .find( "pre#error" ).text( @errorState )
 
-        else if @recentMode
-            if @cache.total > 0 and @cache.loaded is 0
-                # In recent mode, however no recent notifications could be found.
-                # Prompt the user to view older notifications
-                $ ".column#notifications .wrapper .notice#no-recent"
-                    .stop( true ).fadeIn( 250 )
-            else if @cache.total is 0
-                # In recent mode, however there are no notifications.
-                # Tell the user their account has no recorded activity
-                $ ".column#notifications .wrapper .notice#no-activity"
-                    .stop( true ).fadeIn( 250 )
+        else if @recentMode and @cache.total > 0 and @cache.loaded is 0
+            # In recent mode, however no recent notifications could be found.
+            # Prompt the user to view older notifications
+            $ ".column#notifications .wrapper .notice#no-recent"
+                .stop( true ).fadeIn( 250 )
+        else if @cache.total is 0
+            # In recent mode, however there are no notifications.
+            # Tell the user their account has no recorded activity
+            $ ".column#notifications .wrapper .notice#no-activity"
+                .stop( true ).fadeIn( 250 )
 
         $panel = $ ".column#notifications .wrapper .panel#notifs"
         if @cache.loaded > 0 and not $panel.hasClass "open"
