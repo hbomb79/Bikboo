@@ -3,5 +3,7 @@ class UsersController < ApplicationController
 
     def show; end
 
+    def show_new; end
+
     # def edit; end
 end

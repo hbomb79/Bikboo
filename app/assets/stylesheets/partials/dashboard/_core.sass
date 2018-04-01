@@ -67,44 +67,61 @@
 //                     box-shadow: inset 0px 0px 4px -1px #9c0000
 // END OF DEPRECATED CHUNK.
 
+/*
+ * DEPRECATION NOTICE
+ * 16baaa (notifications) - dash.v02 - 31.03.2018
+ * ------------------
+ *
+ * The following chunk in this SASS file has been deprecated as the
+ * users dashboard is being redesigned.
+ *
+ * Usage of this file should be avoided. Once a removal date has been scheduled,
+ * this code will be commented out; Any site functionality relying on this SASS
+ * will fail at this time.
+ *
+ * THIS CHUNK HAS NO SCHEDULED REMOVAL DATE - See issue #1 for updates
+ *
+ * Copyright (c) Harry Felton 2018
+ */
+
 @import 'partials/dashboard/banner'
 
-#main
-    margin-top: $bannerHeight
-    width: 100%
-    max-width: none
+// #main
+//     margin-top: $bannerHeight
+//     width: 100%
+//     max-width: none
 
-    a:not(.button)
-        color: $bg-accent
+//     a:not(.button)
+//         color: $bg-accent
 
-    main
-        @extend .abs-stretch
-        min-width: $minContainerWidth
+//     main
+//         @extend .abs-stretch
+//         min-width: $minContainerWidth
 
-        top: $bannerHeight
+//         top: $bannerHeight
 
-        .column
-            position: relative
+//         .column
+//             position: relative
 
-        @import 'partials/dashboard/projects'
-        @import 'partials/dashboard/activity'
+//         @import 'partials/dashboard/projects'
+//         @import 'partials/dashboard/activity'
 
-        .column .wrapper .notice
-            @extend .abs-center
+//         .column .wrapper .notice
+//             @extend .abs-center
             
-            width: 100%
-            padding: 0 1rem
+//             width: 100%
+//             padding: 0 1rem
 
-            text-align: center
-            h3
-                font-weight: 600
-                margin: 5px 0px
-                color: #616161
+//             text-align: center
+//             h3
+//                 font-weight: 600
+//                 margin: 5px 0px
+//                 color: #616161
 
-            span, p
-                font-style: italic
-                color: #939090
+//             span, p
+//                 font-style: italic
+//                 color: #939090
 
-            pre
-                color: #a2a2a2
-                font-weight: 900
+//             pre
+//                 color: #a2a2a2
+//                 font-weight: 900
