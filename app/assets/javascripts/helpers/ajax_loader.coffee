@@ -36,6 +36,24 @@ class @AjaxLoader
 
         , 60000
 
+
+    ##
+    # Alters the newly loaded content slightly to enhance
+    # visuals
+    hookContent: ($content) ->
+        $content
+            .stop( true )
+            .fadeIn( 500 )
+            .find( ".project" )
+            .css("margin-top", "5rem")
+            .each (i) ->
+                setTimeout =>
+                    $( this ).animate
+                        marginTop: "1rem"
+                    , 250
+                , Math.min( 50 * i, 2000 )
+
+
     ##
     # Performs a simple AJAX request that will automatically
     # execute JavaScript returned from the server.
