@@ -1,9 +1,12 @@
+include ActionView::Helpers::DateHelper
+
 class ProjectsController < ApplicationController
     before_action :require_login
     layout 'users'
 
     def index
         respond_to do |format|
+            format.js
             format.html { redirect_to '/dashboard' }
             format.json { render :json => { projects: construct_payload } }
         end
@@ -48,8 +51,18 @@ class ProjectsController < ApplicationController
             end
         end
     end
-private
 
+    def get_metadata
+        payload = { project_count: current_user.projects.count, projects: {} }
+        projects = payload[:projects]
+        current_user.projects.each do |project|
+            projects[project.id] = { raw: project.updated_at.to_s, formatted: time_ago_in_words( project.updated_at ) }
+        end
+
+        render :json => payload, status: :ok
+    end
+
+private
     def construct_payload
         return current_user.projects
     end

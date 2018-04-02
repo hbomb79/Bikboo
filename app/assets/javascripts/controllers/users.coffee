@@ -1,9 +1,9 @@
 #= require core
 #= require helpers/nav
-#= require helpers/activity_pane
-#= require helpers/projects_pane
+#= require helpers/ajax_loader
 
 window.addEventListener 'load', =>
-    @activityPane = new ActivityPane
-    @projectsPane = new ProjectsPane
+    # @activityPane = new ActivityPane
+    # @projectsPane = new ProjectsPane
+    @ajaxLoader = new AjaxLoader
 , false
