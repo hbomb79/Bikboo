@@ -128,6 +128,7 @@ body
                     height: 100%
 
                     a
+                        background: #fff
                         display: inline-block
                         width: 100%
                         height: 100%
@@ -137,6 +138,8 @@ body
                         border-image-slice: 1
 
                         box-shadow: inset 5px 0px 9px -6px black
+
+                        transition: background 0.15s ease-in
 
                         .wrapper
                             position: absolute
@@ -158,6 +161,11 @@ body
                                 color: #7d7d7d
                                 margin-top: 10px
                                 display: block
+                        &:hover
+                            background: #f7f7f7
+
+                        &:active
+                            background: #eeeeee
 
             .project.placeholder
                 background: #ffffff
