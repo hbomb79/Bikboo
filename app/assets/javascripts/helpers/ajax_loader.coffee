@@ -27,7 +27,9 @@ class @AjaxLoader
                         project = $ "section#projects .project-list .content .project[data-id=#{id}]"
 
                         if ( val.raw != project.attr "data-updated-at" ) or not project.length
-                            return @reloadContent()
+                            do @reloadContent
+
+                            return false
 
                         project.find ".time"
                             .html( val.formatted )
