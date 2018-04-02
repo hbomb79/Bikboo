@@ -1,3 +1,22 @@
+##
+# DEPRECATION NOTICE
+# c8339d (notifications) - dash.v02 - 2.04.2018
+# ------------------
+#
+# This coffee script file has been deprecated because the
+# users dashboard is being redesigned.
+#
+# Usage of this file should be avoided. Once a removal date has been scheduled,
+# this code will be commented out; Any site functionality relying on this CoffeeScript
+# will fail at this time.
+#
+# THIS CHUNK HAS NO SCHEDULED REMOVAL DATE - See issue #1 for updates
+#
+# Copyright (c) Harry Felton 2018
+#
+
+console.warn "DEPRECATION WARNING: This file (helpers/activity_pane.coffee) has been deprecated. It will be removed in the future, migrate code to new CoffeeScript"
+
 class @ActivityPane
     recentMode: true
     errorState: false

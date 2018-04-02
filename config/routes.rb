@@ -8,7 +8,6 @@ Rails.application.routes.draw do
     get '/signout', to: 'sessions#destroy'
 
     get '/dashboard', to: 'users#show'
-    get '/new-dashboard', to: 'users#show_new'
 
     scope :api do
         get '/projects/metadata', to: 'projects#get_metadata'
