@@ -7,21 +7,14 @@ Rails.application.routes.draw do
     get '/signin', to: redirect( path: '/auth/google' )
     get '/signout', to: 'sessions#destroy'
 
-    get '/dashboard', to: 'users#show'
+    get '/dashboard', to: 'projects#index'
+    get '/dashboard/project/:id', to: 'projects#index'
+    get '/api/projects', to: redirect( path: '/dashboard' )
 
     scope :api do
         get '/projects/metadata', to: 'projects#get_metadata'
         resources :projects
     end
-    get '/projects', to: redirect( path: '/dashboard' )
-
-    # resources :notifications, only: [:index, :update, :destroy]
-    # get 'notifications/recent', to: 'notifications#recent'
-
-    # scope :api do
-    #     resources :notifications, only: [:index, :update, :destroy]
-    #     get 'notifications/recent', to: 'notifications#recent'
-    # end
 
     root 'landing#index'
 end
