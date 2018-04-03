@@ -10,22 +10,32 @@
 
 class @AjaxLoader
     refreshingInterval: false
-    targetURL: false
+    loadingTitles:
+        index: 'Fetching projects...'
+        show: 'Gathering project details...'
+    target:
+        url: false
+        type: 'unknown'
 
     constructor: ->
         do @refreshTargetURL
+        @updateLoadingPreset true
         do @loadContent
 
     refreshTargetURL: ->
         path = window.location.pathname
-        if path.match /dashboard\/project\/(\d+)/i
+        if /dashboard\/project\/(\d+)/i.test path
             # Project overview
+            @target.url = '/api/project/' + (/dashboard\/project\/(\d+)/g.exec path)[1]
+            @target.type = 'show'
         else if path.match /dashboard\/?$/i
             # Dashboard
-            @targetURL = "/api/projects"
+            @target.url = "/api/projects"
+            @target.type = 'index'
         else
             console.error "[FATAL] Unable to load page, unable to map URL to valid RESTful endpoint! Check URL and try again."
-            @targetURL = "/api/projects"
+            @target.url = "/api/projects"
+            @target.type = 'index'
 
     updateDOMFromPayload: (payload, meta='') ->
         $("[data-ajax-meta='#{meta}']").each ->
@@ -42,9 +52,16 @@ class @AjaxLoader
                     else
                         console.warn("Malformed data-ajax-attr-pair, pair #{pair} is invalid on element #{this}")
 
+    updateLoadingPreset: (initial) ->
+        if initial
+            $("section.page-viewer .content .loading").html( $(".loading-types ##{@target.type}").html() )
+            @updateDOMFromPayload( section_title: @loadingTitles[@target.type] )
+        else
+            # TODO
+
     refreshData: ->
         $.ajax
-            url: "#{@targetURL}/metadata"
+            url: "#{@target.url}/metadata"
             method: 'get'
             dataType: 'text'
             error: (xhr, state, display) =>
@@ -57,10 +74,10 @@ class @AjaxLoader
 
     loadContent: ->
         clearInterval @refreshingInterval
-        return console.warn "Unable to load content, no target URL available on ajaxLoader" unless @targetURL
+        return console.warn "Unable to load content, no target URL available on ajaxLoader" unless @target.url
 
         $.ajax
-            url: @targetURL
+            url: @target.url
             method: 'get'
             dataType: 'json'
             error: (xhr, state, display) =>
