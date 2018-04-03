@@ -93,4 +93,4 @@ class @AjaxLoader
         clearInterval @refreshingInterval
         @refreshingInterval = setInterval =>
             do @refreshData
-        , 6000
+        , 60000
