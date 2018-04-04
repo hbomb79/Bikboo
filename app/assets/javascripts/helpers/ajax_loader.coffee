@@ -20,7 +20,8 @@ class @AjaxLoader
     constructor: ->
         do @refreshTargetURL
         @updateLoadingPreset true
-        do @loadContent
+
+        window.addEventListener 'load', @loadContent.call @ , false
 
     refreshTargetURL: ->
         path = window.location.pathname

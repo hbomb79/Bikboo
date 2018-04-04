@@ -2,6 +2,5 @@
 #= require helpers/nav
 #= require helpers/ajax_loader
 
-window.addEventListener 'load', =>
+$( document ).ready =>
     @ajaxLoader = new AjaxLoader
-, false
