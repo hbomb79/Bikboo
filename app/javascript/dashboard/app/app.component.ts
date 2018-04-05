@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import templateString from './template.html';
 
 @Component({
-  selector: 'app-root',
+  selector: 'bikboo-shell',
   template: templateString
 })
 export class AppComponent {
