@@ -14,7 +14,12 @@ private
     # argument to 'auth/google' should be filtered.
     def require_login(to_access: false)
         unless current_user
-            redirect_to( "/?continue=#{to_access or request.fullpath}", alert: "You must be logged in to access this page. Please sign in with Google." )
+            respond_to do |format|
+                format.html { redirect_to( "/?continue=#{to_access or request.fullpath}", alert: "You must be logged in to access this page. Please sign in with Google." ) }
+                format.json do
+                    render :json => { error: 'Unauthorized request. User must be logged in before JSON endpoint can be utilized', content: 'Failed' }, status: :unauthorized
+                end
+            end
         end
     end
 
