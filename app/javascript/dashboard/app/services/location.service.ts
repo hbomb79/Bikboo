@@ -22,7 +22,7 @@ export class LocationService {
 
         // Subscribe to popState changes
         this.location.subscribe(state => {
-            this.logger.debug("Caught popstate change: ", state);
+            this.logger.warn("Caught popstate change: ", state);
             return this.urlObservable.next( state.url || '' );
         })
     }
@@ -30,16 +30,31 @@ export class LocationService {
     handleAnchorClick( target: HTMLAnchorElement ) : boolean {
         this.logger.debug("Handling anchor click from anchor ", target);
 
-        return true;
+        if(
+            target.classList.contains('no-follow') ||
+            target.download ||
+            target.host !== window.location.host ||
+            target.protocol !== window.location.protocol ) {
+            return true;
+        }
+
+        // Knowing that the protocol and host are the same,
+        // take the rest of the URL and travel there (as it's internal).
+        this.go( target.pathname + target.search + target.hash );
+
+        // Disallow further processing of this URL.
+        return false;
     }
 
     go( url: string ) {
         this.logger.debug("Travelling to url ", url);
         if(/^http/.test( url )) {
+            this.logger.warn("External URL, travelling");
             window.location.assign( url );
         } else {
+            this.logger.warn("Internal URL, travelling");
             this.location.go( url );
-            // this.urlObservable.next( url );
+            this.urlObservable.next( url );
         }
     }
 
