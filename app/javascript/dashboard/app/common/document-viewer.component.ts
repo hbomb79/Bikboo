@@ -1,6 +1,6 @@
-import { Component, ViewContainerRef, OnInit,
-         ElementRef, ComponentRef, OnDestroy, DoCheck,
-         EventEmitter } from '@angular/core';
+import { Component, ViewContainerRef, ElementRef,
+         ComponentRef, OnDestroy, DoCheck,
+         EventEmitter, Input, Output } from '@angular/core';
 
 import { LoggerService } from '../services/logger.service';
 import { DocumentService } from '../services/document.service';
@@ -27,12 +27,12 @@ const ANIMATION_EXCLUDE:string = 'no-animations';
     selector: 'app-document-viewer',
     template: ''
 })
-export class DocumentViewerComponent implements OnInit, DoCheck, OnDestroy {
+export class DocumentViewerComponent implements DoCheck, OnDestroy {
     private hostElement: HTMLElement;
 
     // A list of component references, these will be delivered
     // from EmbbeddedComponentsService in this.loadNextView()
-    protected embeddedComponents: ComponentRef<any>[];
+    protected embeddedComponents: ComponentRef<any>[] = [];
 
     // This observable allows chaining of expressions
     // that would usually need intricate timing functions.
@@ -40,7 +40,7 @@ export class DocumentViewerComponent implements OnInit, DoCheck, OnDestroy {
     // using this technique.
     private void$ = of<void>(undefined);
     private onDestroy$ = new EventEmitter<void>();
-    private docContents = new EventEmitter<DocumentContents>();
+    private docContents$ = new EventEmitter<DocumentContents>();
 
     // These two divs allow simplified rotation of DOM elements.
     // It means that the next page has somewhere to go while the
@@ -49,8 +49,39 @@ export class DocumentViewerComponent implements OnInit, DoCheck, OnDestroy {
     protected currentView: HTMLElement = document.createElement('div');
     protected pendingView: HTMLElement = document.createElement('div');
 
+    // The document has been received from the document service
+    // and processing is about to begin
+    @Output() docReceived = new EventEmitter<void>();
+
+    // The document and it's embedded components (if any)
+    // have been prepared
+    @Output() docPrepared = new EventEmitter<void>();
+
+    // The old document view has been removed from the DOM
+    @Output() docRemoved = new EventEmitter<void>();
+
+    // The new document view has been inserted in to the DOM
+    @Output() docInserted = new EventEmitter<void>();
+
+    // The views have been swapped (new is now current, old
+    // has been freed from memory).
+    @Output() viewSwapped = new EventEmitter<void>();
+
+    // The document has been updated from AppComponent!
+    // Emit the new document contents via the EventEmitter.
+    // This will allow the DocumentViewer to switchMap the
+    // render for the new document (allowing it to be cancelled)
+    // if a new document comes in.
+    @Input()
+    set doc(document: DocumentContents) {
+        if( document ) {
+            this.docContents$.emit( document );
+        }
+    }
+
     constructor(
         elementRef: ElementRef,
+        private viewContainerRef: ViewContainerRef,
         private logger: LoggerService,
         private documentService: DocumentService,
         private embeddedService: EmbeddedComponentsService
@@ -58,11 +89,25 @@ export class DocumentViewerComponent implements OnInit, DoCheck, OnDestroy {
         // Store a reference to the host element so that we can
         // swap views later (see this.rotateViews).
         this.hostElement = elementRef.nativeElement;
+
+        this.docContents$
+            .switchMap( doc => this.loadNextView( doc ) )
+            .takeUntil( this.onDestroy$ ) // When this notifier emits a value, stop.
+            .subscribe(); // Subscribe now to start the observable
     }
 
-    ngOnInit() {}
-    ngDoCheck() {}
-    ngOnDestroy() {}
+    // Call detectChanges on each component to tell
+    // Angular to call lifecycle hooks
+    ngDoCheck() {
+        this.embeddedComponents.forEach(comp => comp.changeDetectorRef.detectChanges());
+    }
+
+    // Component is being destroyed! Emit the 'onDestroy'
+    // event so that the docContents$ pipe responsible
+    // for rendering documents finishes
+    ngOnDestroy() {
+        this.onDestroy$.emit();
+    }
 
     // Destroys the components inside the view and
     // resets 'this.embeddedComponents'.
@@ -71,8 +116,36 @@ export class DocumentViewerComponent implements OnInit, DoCheck, OnDestroy {
 
     // Swaps the current view with the pending view.
     protected rotateViews() {
+        //TODO: Animations
+        // Remove the current view
+        if( this.currentView.parentElement ) {
+            this.currentView.parentElement.removeChild( this.currentView );
+            this.docRemoved.emit()
+        }
+
+        return this.void$
+            .do(() => this.hostElement.appendChild( this.pendingView ) )
+            .do(() => this.docInserted.emit() )
+            .do(() => {
+                const old = this.currentView
+                this.currentView = this.pendingView
+                this.pendingView = old
+                this.pendingView.innerHTML = '';
+            })
+            .do(() => this.viewSwapped.emit() );
     }
 
-    protected loadNextView() {
+    protected loadNextView(doc: DocumentContents) : Observable<void> {
+        return this.void$
+            .do(() => this.docReceived.emit() )
+            .do(() => this.pendingView.innerHTML = doc.content || '')
+            .switchMap(() => this.embeddedService.createEmbedded( this.pendingView, this.viewContainerRef ) )
+            .do(comps => this.embeddedComponents = comps)
+            .do(() => this.docPrepared.emit() )
+            .switchMap(() => this.rotateViews())
+            .catch(err => {
+                this.logger.error(`Failed to load next view for document titled "${doc.title}", error: "${err.stack || err}".`);
+                return this.void$;
+            });
     }
 }

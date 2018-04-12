@@ -11,5 +11,7 @@ export class ProjectTileComponent implements OnInit {
         this.logger.warn("Project tile created!");
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.logger.warn("Project tile INIT! I'm in the DOM!");
+    }
 }
