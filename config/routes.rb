@@ -12,8 +12,9 @@ Rails.application.routes.draw do
     # get '/api/projects', to: redirect( path: '/dashboard' )
 
     scope :api do
-        get '/projects/metadata', to: 'projects#get_metadata'
         get 'index.json', to: 'landing#fetch_json'
+        get 'dashboard.json', to: 'projects#index'
+        # get '/projects/metadata', to: 'projects#get_metadata'
         resources :projects
     end
 

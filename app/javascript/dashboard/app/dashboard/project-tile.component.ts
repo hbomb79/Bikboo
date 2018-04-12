@@ -7,11 +7,7 @@ import { LoggerService } from '../services/logger.service';
     template: '<p>This is a project tile!</p>'
 })
 export class ProjectTileComponent implements OnInit {
-    constructor(private logger: LoggerService) {
-        this.logger.warn("Project tile created!");
-    }
+    constructor(private logger: LoggerService) {}
 
-    ngOnInit() {
-        this.logger.warn("Project tile INIT! I'm in the DOM!");
-    }
+    ngOnInit() {}
 }

@@ -14,6 +14,13 @@ import templateString from './template.html';
     template: templateString
 })
 export class AppComponent implements OnInit {
+    // A hash of DOM element configurations. Rather than these being sprinkled
+    // throughout the class definition, they're all located here.
+    // These are automatically updated when 'updateHost' is executed.
+    protected DOMConfig = {
+        subBanner: false as any
+    };
+
     isStarting:boolean = true;
 
     // When 'true', a progress bar representing the progress of document fetch
@@ -30,11 +37,11 @@ export class AppComponent implements OnInit {
     // bar if the page loads quick enough.
     private progressBarTimeout:any;
 
-    // Depending on the classes present on the 
-    navigationEnabled: boolean = false;
+    currentUrl:string;
+    currentDocument:DocumentContents;
 
-    currentUrl: string;
-    currentDocument: DocumentContents;
+    @HostBinding('class')
+    protected hostClasses:string = '';
 
     constructor(
         private documentService: DocumentService,
@@ -46,12 +53,18 @@ export class AppComponent implements OnInit {
 
     ngOnInit() {
         this.locationService.currentUrl.subscribe(url => {
-            this.currentUrl = url;
+            if( url == this.currentUrl ) {
+                // As the URL has changed, but the normalised URL is the same,
+                // we'll assume that only the hash component has changed.
+                //TODO: Handle hash scroll.
+            } else {
+                this.currentUrl = url;
 
-            clearTimeout( this.progressBarTimeout )
-            this.progressBarTimeout = setTimeout( () => {
-                this.isFetching = true;
-            }, 200 )
+                clearTimeout( this.progressBarTimeout )
+                this.progressBarTimeout = setTimeout( () => {
+                    this.isFetching = true;
+                }, 200 )
+            }
         })
         this.documentService.currentDocument.subscribe(doc => this.currentDocument = doc);
     }
@@ -70,27 +83,40 @@ export class AppComponent implements OnInit {
     }
 
     // Callback used to track the 'docPrepared' event on the DocumentViewerComponent
-    onDocumentPrepared(){
-        this.logger.debug("[Embedded Document] Prepared");
-    }
+    onDocumentPrepared(){ }
 
     // Callback used to track the 'docRemoved' event on the DocumentViewerComponent
-    onDocumentRemoved(){
-        this.logger.debug("[Embedded Document] Removed");
-    }
+    onDocumentRemoved(){ }
 
     // Callback used to track the 'docInserted' event on the DocumentViewerComponent
-    onDocumentInserted(){
-        this.logger.debug("[Embedded Document] Inserted");
+    onDocumentInserted() {
+        setTimeout(() => this.updateHost(), 0);
     }
 
     // Callback used to track the 'viewSwapped' event on the DocumentViewerComponent
     onDocumentSwapComplete(){
+        // If this was the initial load, set isStarting to false
+        setTimeout(() => {
+            this.isStarting = false
+            this.DOMConfig.subBanner = this.currentDocument.sub_title;
+        }, 0);
+
         // Removes the rendering progress bar (if one is shown)
         // after a small delay to prevent flickering.
         setTimeout(() => {
             this.isRendering = false;
         }, 500);
+    }
+
+    // Update the classes present on the host element, basing the new
+    // values off of the values found in the embedded document.
+    updateHost() {
+        const pageSlug = this.currentUrl ? /^\/*(.+?)\/*$/g.exec( this.currentUrl )[1].replace(/\//g, '-') : 'index';
+
+        this.hostClasses = [
+            `page-${pageSlug}`,
+            `tree-${pageSlug.match(/[^-]+/)[0]}`
+        ].join(' ')
     }
 
     @HostListener('click', ['$event.target', '$event.button', '$event.ctrlKey', '$event.metaKey'])
