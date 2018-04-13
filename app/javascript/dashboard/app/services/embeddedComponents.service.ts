@@ -2,6 +2,7 @@ import { Injectable, InjectionToken, Inject, Injector,
          ComponentFactory, ComponentFactoryResolver, ComponentRef, ViewContainerRef } from '@angular/core';
 import { LoggerService } from './logger.service';
 
+import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
 export const EMBEDDED_COMPONENTS = new InjectionToken('EMBEDDED_COMPONENTS');
@@ -16,7 +17,7 @@ export class EmbeddedComponentsService {
         private componentFactoryResolver: ComponentFactoryResolver,
         @Inject(EMBEDDED_COMPONENTS) private embeddedComponentsPairs: any[]) {}
 
-    createEmbedded( element: HTMLElement, viewRef: ViewContainerRef ) {
+    createEmbedded( element: HTMLElement, viewRef: ViewContainerRef ) : Observable<ComponentRef<any>[]> {
         const matchedComponents = Object.keys( this.embeddedComponentsPairs )
             .filter(selector => element.querySelector( this.embeddedComponentsPairs[selector].__annotations__[0].selector ) )
             .map(selector => this.embeddedComponentsPairs[selector])

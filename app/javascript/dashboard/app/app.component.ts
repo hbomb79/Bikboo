@@ -18,6 +18,7 @@ export class AppComponent implements OnInit {
     // throughout the class definition, they're all located here.
     // These are automatically updated when 'updateHost' is executed.
     protected DOMConfig = {
+        banner: false as any,
         subBanner: false as any
     };
 
@@ -98,7 +99,6 @@ export class AppComponent implements OnInit {
         // If this was the initial load, set isStarting to false
         setTimeout(() => {
             this.isStarting = false
-            this.DOMConfig.subBanner = this.currentDocument.sub_title;
 
             this.updateHost()
         }, 0);
@@ -114,6 +114,9 @@ export class AppComponent implements OnInit {
     // values off of the values found in the embedded document.
     updateHost() {
         const pageSlug = this.currentUrl ? /^\/*(.+?)\/*$/g.exec( this.currentUrl )[1].replace(/\//g, '-') : 'index';
+
+        this.DOMConfig.banner = pageSlug != "index"
+        this.DOMConfig.subBanner = this.currentDocument.sub_title;
 
         this.hostClasses = [
             `page-${pageSlug}`,

@@ -6,7 +6,7 @@ export class LoggerService {
 
     debug( value: any, ...rest: any[] ) {
         if( process.env.NODE_ENV != 'production' ) {
-            console.debug( value, ...rest );
+            console.debug( "[debug] " + value, ...rest );
         }
     }
 

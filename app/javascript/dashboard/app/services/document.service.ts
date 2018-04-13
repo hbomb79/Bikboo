@@ -41,7 +41,7 @@ export class DocumentService {
                     throw "URL not found, redirecting to 404 - Not Found page";
                 }
 
-                return of<DocumentContents>(undefined);
+                return of(error);
             });
     }
 }
