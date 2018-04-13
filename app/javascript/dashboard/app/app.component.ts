@@ -88,7 +88,7 @@ export class AppComponent implements OnInit {
                 clearTimeout( this.progressBarTimeout )
                 this.progressBarTimeout = setTimeout( () => {
                     this.isFetching = true;
-                }, 200 )
+                }, 300 )
             }
         })
         this.documentService.currentDocument.subscribe( ( event:HttpEvent<any> ) => {
@@ -113,24 +113,18 @@ export class AppComponent implements OnInit {
     }
 
     // Callback used to track the 'docReceived' event on the DocumentViewerComponent
-    onDocumentReceived(){
-        // If the document was received within 200ms, the
-        // timeout won't have completed and
-        // a progress bar hasn't appeared. Don't show a rendering
-        // bar in this situation.
-        
-    }
+    onDocumentReceived(){}
 
     // Callback used to track the 'docPrepared' event on the DocumentViewerComponent
-    onDocumentPrepared(){ }
+    onDocumentPrepared(){
+        clearTimeout( this.progressBarTimeout );
+    }
 
     // Callback used to track the 'docRemoved' event on the DocumentViewerComponent
-    onDocumentRemoved(){ }
+    onDocumentRemoved(){}
 
     // Callback used to track the 'docInserted' event on the DocumentViewerComponent
     onDocumentInserted() {
-        clearTimeout( this.progressBarTimeout );
-
         setTimeout(() => this.updateHost(), 0);
     }
 
