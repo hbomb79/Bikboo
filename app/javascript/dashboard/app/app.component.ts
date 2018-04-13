@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
     // These are automatically updated when 'updateHost' is executed.
     protected DOMConfig = {
         banner: false as any,
-        subBanner: false as any
+        subBanner: '' as string
     };
 
     isStarting:boolean = true;
