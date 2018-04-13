@@ -1,6 +1,8 @@
 import { Component, ElementRef, HostBinding, HostListener,
          OnInit, ViewChild, ViewChildren } from '@angular/core';
 
+import { HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
+
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { DocumentService } from './services/document.service';
@@ -24,6 +26,16 @@ import templateString from './template.html';
                 style({transform: 'translateY(0)', opacity: 1}),
                 animate('100ms ease-in', style({transform: 'translateY(-100%)', opacity: 0}))
             ])
+        ]),
+        trigger("progressFade", [
+            transition(':enter', [
+                style({opacity: 0}),
+                animate('200ms ease-out', style({opacity: 1}))
+            ]),
+            transition(':leave', [
+                style({opacity: 1}),
+                animate('500ms ease-in', style({opacity: 0}))
+            ])
         ])
     ]
 })
@@ -40,12 +52,10 @@ export class AppComponent implements OnInit {
 
     // When 'true', a progress bar representing the progress of document fetch
     // will be displayed
-    isFetching:boolean = false;
+    isFetching:boolean = true;
+    fetchProgress:number = 0;
 
-    // When 'true', a loading bar will appear (typically replacing the progress
-    // bar from above) which moves much faster with no predefined end. This is to
-    // indicate 'rendering'.
-    isRendering:boolean = false;
+    protected requestContentLength:number = 0;
 
     // A place to store the timeout index for the progress bar.
     // This is used to prevent the appearance of the progress
@@ -81,7 +91,25 @@ export class AppComponent implements OnInit {
                 }, 200 )
             }
         })
-        this.documentService.currentDocument.subscribe(doc => this.currentDocument = doc);
+        this.documentService.currentDocument.subscribe( ( event:HttpEvent<any> ) => {
+            switch( event.type ) {
+                case HttpEventType.Sent:
+                    this.fetchProgress = 0.1;
+
+                    break;
+                case HttpEventType.ResponseHeader:
+                    this.fetchProgress = 0.2;
+                    this.requestContentLength = parseInt( event.headers.get('content-length') ) || 1;
+                    break;
+                case HttpEventType.DownloadProgress:
+                    this.fetchProgress = Math.max( this.fetchProgress, Math.min( event.loaded / this.requestContentLength, 0.9 ) );
+                    break;
+                case HttpEventType.Response:
+                    this.fetchProgress = 0.9;
+                    this.requestContentLength = 0;
+                    this.currentDocument = event.body;
+            }
+        });
     }
 
     // Callback used to track the 'docReceived' event on the DocumentViewerComponent
@@ -90,11 +118,7 @@ export class AppComponent implements OnInit {
         // timeout won't have completed and
         // a progress bar hasn't appeared. Don't show a rendering
         // bar in this situation.
-        clearTimeout( this.progressBarTimeout );
-        if( this.isFetching ) {
-            this.isFetching = false;
-            this.isRendering = true;
-        }
+        
     }
 
     // Callback used to track the 'docPrepared' event on the DocumentViewerComponent
@@ -105,11 +129,14 @@ export class AppComponent implements OnInit {
 
     // Callback used to track the 'docInserted' event on the DocumentViewerComponent
     onDocumentInserted() {
+        clearTimeout( this.progressBarTimeout );
+
         setTimeout(() => this.updateHost(), 0);
     }
 
     // Callback used to track the 'viewSwapped' event on the DocumentViewerComponent
     onDocumentSwapComplete(){
+        this.fetchProgress = 1;
         // If this was the initial load, set isStarting to false
         setTimeout(() => {
             this.isStarting = false
@@ -120,7 +147,7 @@ export class AppComponent implements OnInit {
         // Removes the rendering progress bar (if one is shown)
         // after a small delay to prevent flickering.
         setTimeout(() => {
-            this.isRendering = false;
+            this.isFetching = false
         }, 500);
     }
 
