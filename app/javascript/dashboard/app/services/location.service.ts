@@ -12,7 +12,6 @@ export class LocationService {
 
     currentUrl = this.urlObservable
         .map(url => this.location.normalize( url ));
-        // .map(url => ( /(.*)(\?.+)/g.exec( url ) || [] )[1] );
 
     currentUrlParams = this.urlObservable
         .map(url => ( /(.*)\?(.+)/g.exec( url ) || [] )[2] );
@@ -20,16 +19,12 @@ export class LocationService {
     constructor( private location: Location, private logger: LoggerService ) {
         this.urlObservable.next( location.path( false ) );
 
-        // Subscribe to popState changes
         this.location.subscribe(state => {
-            this.logger.warn("Caught popstate change: ", state);
             return this.urlObservable.next( state.url || '' );
         })
     }
 
     handleAnchorClick( target: HTMLAnchorElement ) : boolean {
-        this.logger.debug("Handling anchor click from anchor ", target);
-
         if(
             target.classList.contains('no-follow') ||
             target.download ||
@@ -47,19 +42,15 @@ export class LocationService {
     }
 
     go( url: string ) {
-        this.logger.debug("Travelling to url ", url);
         if(/^http/.test( url )) {
-            this.logger.warn("External URL, travelling");
             window.location.assign( url );
         } else {
-            this.logger.warn("Internal URL, travelling");
             this.location.go( url );
             this.urlObservable.next( url );
         }
     }
 
     replace(url: string) {
-        this.logger.debug("Travelling to url ", url, " via full page reload");
         window.location.replace( url );
     }
 }
