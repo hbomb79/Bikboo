@@ -16,7 +16,7 @@ const DOCUMENT_BASE_URL:string = '/api';
 export class DocumentService {
     currentDocument: Observable<DocumentContents>;
     constructor(
-        locationService: LocationService,
+        private locationService: LocationService,
         private logger: LoggerService,
         private http: HttpClient) {
         
@@ -34,6 +34,14 @@ export class DocumentService {
                 if( !data || typeof data !== 'object' ) {
                     throw Error('Invalid JSON data received from ' + url);
                 }
+            })
+            .catch(error => {
+                if( error.status == 404 ) {
+                    this.locationService.replace("404");
+                    throw "URL not found, redirecting to 404 - Not Found page";
+                }
+
+                return of<DocumentContents>(undefined);
             });
     }
 }

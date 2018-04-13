@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { InlineSVGModule } from 'ng-inline-svg';
 
 /* Components */
 import { AppComponent } from './app.component';
@@ -20,7 +21,8 @@ import { Location, LocationStrategy, PathLocationStrategy } from '@angular/commo
 import { LoggerService } from './services/logger.service';
 import { DocumentService } from './services/document.service';
 import { UserService } from './services/user.service';
-import { LocationService } from './services/location.service'
+import { LocationService } from './services/location.service';
+import { ProjectService } from './services/project.service';
 
 import { EmbeddedComponentsService, EMBEDDED_COMPONENTS } from './services/embeddedComponents.service';
 
@@ -40,7 +42,8 @@ const embeddableComponents = [ ProjectListComponent, ProjectTileComponent, Proje
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
-        HttpClientModule
+        HttpClientModule,
+        InlineSVGModule
     ],
     providers: [
         LoggerService,
@@ -48,6 +51,7 @@ const embeddableComponents = [ ProjectListComponent, ProjectTileComponent, Proje
         UserService,
         LocationService,
         EmbeddedComponentsService,
+        ProjectService,
         Location,
         { provide: LocationStrategy, useClass: PathLocationStrategy },
         { provide: EMBEDDED_COMPONENTS, useValue: embeddableComponents }
