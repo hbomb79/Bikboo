@@ -23,8 +23,8 @@ class ProjectsController < ApplicationController
             format.json do
                 render :json => {
                     content: render_to_string( :layout => false, :formats => [:html] ),
-                    title: 'Error',
-                    sub_title: 'Error: Not yet defined'
+                    title: 'Project Information',
+                    sub_title: @project.title || 'Unnamed Project'
                 }
             end
         end
@@ -86,7 +86,8 @@ class ProjectsController < ApplicationController
             :project => project.as_json,
             :slides => project.project_slides.as_json
         }
-
+        
+        #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
         render :json => payload
     end
 
