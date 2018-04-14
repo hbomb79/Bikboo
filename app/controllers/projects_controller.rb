@@ -7,13 +7,6 @@ class ProjectsController < ApplicationController
         respond_to do |format|
             format.html
             format.json do
-                # render :json => {
-                #     content: render_to_string( current_user.projects.order!( 'updated_at DESC' ), :formats => [:html] ),
-                #     update_script: render_to_string( :formats => [:js] ),
-                #     section_id: 'projects',
-                #     section_title: 'Projects',
-                #     title: 'Dashboard'
-                # }
                 render :json => {
                     content: render_to_string( :layout => false, :formats => [:html] ),
                     title: 'Dashboard',
@@ -25,6 +18,16 @@ class ProjectsController < ApplicationController
 
     def show
         @project = Project.find params[:id]
+        respond_to do |format|
+            format.html
+            format.json do
+                render :json => {
+                    content: render_to_string( :layout => false, :formats => [:html] ),
+                    title: 'Error',
+                    sub_title: 'Error: Not yet defined'
+                }
+            end
+        end
     end
 
     def new
@@ -72,6 +75,17 @@ class ProjectsController < ApplicationController
             projectJSON[:formatted_updated_at] = time_ago_in_words(project.updated_at)
             projects.push( projectJSON )
         end
+
+        render :json => payload
+    end
+
+    def get_project_information()
+        project = Project.find params[:id]
+
+        payload = {
+            :project => project.as_json,
+            :slides => project.project_slides.as_json
+        }
 
         render :json => payload
     end

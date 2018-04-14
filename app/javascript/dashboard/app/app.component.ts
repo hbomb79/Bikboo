@@ -148,7 +148,8 @@ export class AppComponent implements OnInit {
     // Update the classes present on the host element, basing the new
     // values off of the values found in the embedded document.
     updateHost() {
-        const pageSlug = this.currentUrl ? /^\/*(.+?)\/*$/g.exec( this.currentUrl )[1].replace(/\//g, '-') : 'index';
+        const urlWithoutSearch = this.currentUrl.match(/[^?]*/)[0];
+        const pageSlug = urlWithoutSearch ? /^\/*(.+?)\/*$/g.exec( urlWithoutSearch )[1].replace(/\//g, '-') : 'index';
 
         this.DOMConfig.banner = pageSlug != "index"
         this.DOMConfig.subBanner = this.currentDocument.sub_title;

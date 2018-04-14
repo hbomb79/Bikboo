@@ -10,11 +10,7 @@ import { LoggerService } from './logger.service';
 export class LocationService {
     urlObservable = new ReplaySubject<string>(1);
 
-    currentUrl = this.urlObservable
-        .map(url => this.location.normalize( url ));
-
-    currentUrlParams = this.urlObservable
-        .map(url => ( /(.*)\?(.+)/g.exec( url ) || [] )[2] );
+    currentUrl = this.urlObservable.map(url => this.location.normalize( url ));
 
     constructor( private location: Location, private logger: LoggerService ) {
         this.urlObservable.next( location.path( false ) );

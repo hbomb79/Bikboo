@@ -19,17 +19,23 @@ export class DocumentService {
         private locationService: LocationService,
         private logger: LoggerService,
         private http: HttpClient) {
-        
-        // A new URL has been served from the location service,
-        // create a async http request for the new URl and serve it
-        // through the 'currentDocument' Observable.
-        // The use of switchMap means previous requests will be cancelled
-        // when another comes in.
-        this.currentDocument = locationService.currentUrl.switchMap(url => this.fetchDocumentContents( url ));
+
+        this.currentDocument = locationService.currentUrl
+            .switchMap(url => {
+                const splitRegex = /^([^?]*)(\?[^?]+)$/
+                if( url.match( splitRegex ) )
+                    return of( url.replace( splitRegex, ( input, pre, post ) => ( pre || '/index' ) + ".json" + post ) )
+
+                return of( ( url || "/index" ) + ".json" );
+            })
+            .switchMap(url => this.fetchDocumentContents( url ));
     }
 
     private fetchDocumentContents(url: string) {
-        const req = new HttpRequest('GET', `${DOCUMENT_BASE_URL}${url || '/index'}.json`, {
+        if( !url )
+            throw Error(`No URL provided to fetchDocumentContents, unable to continue with fetch`)
+
+        const req = new HttpRequest('GET', `${DOCUMENT_BASE_URL}${url}`, {
             reportProgress: true,
             observe: 'response'
         })
