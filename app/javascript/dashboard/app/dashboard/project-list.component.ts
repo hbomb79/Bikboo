@@ -51,11 +51,11 @@ import { ProjectService } from '../services/project.service';
         trigger('tileAnimation', [
             transition('* => *', [
                 query(':enter', [
-                    style({ opacity: 0, marginTop: '150px' }),
-                    stagger(50, [
-                        animate('250ms ease', style({ opacity: 1, marginTop: '0' }))
+                    style({ opacity: 0, marginTop: '50px' }),
+                    stagger(75, [
+                        animate('200ms ease-out', style({ opacity: 1, marginTop: '0' }))
                     ])
-                ]),
+                ], {optional: true}),
                 query(':leave', [
                     stagger(100, [
                         animate('250ms', style({ opacity: 0 }))
@@ -92,16 +92,19 @@ export class ProjectListComponent implements OnInit, OnDestroy {
     constructor(private logger: LoggerService, private projectService: ProjectService) {}
 
     ngOnInit() {
-        this.isFetching = true
-        this.queryProjectMetadata(() => {
-            this.isFetching = false;
+        setTimeout( () => {
+            const fetchingTimeout = setTimeout( () => this.isFetching = true, 200 )
+            this.queryProjectMetadata(() => {
+                clearTimeout( fetchingTimeout )
+                this.isFetching = false;
 
-            Observable
-                .interval(60000)
-                .do(() => this.queryProjectMetadata() )
-                .takeUntil(this.onDestroy$)
-                .subscribe();
-        })
+                Observable
+                    .interval(60000)
+                    .do(() => this.queryProjectMetadata() )
+                    .takeUntil(this.onDestroy$)
+                    .subscribe();
+            })
+        }, 350 )
     }
 
     ngOnDestroy() {

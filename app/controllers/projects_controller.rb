@@ -86,7 +86,7 @@ class ProjectsController < ApplicationController
             :project => project.as_json,
             :slides => project.project_slides.as_json
         }
-        
+
         #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
         render :json => payload
     end
