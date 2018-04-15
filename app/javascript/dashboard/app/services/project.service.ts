@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { switchMap } from 'rxjs/operators';
 
-import { ProjectMetadataList, ProjectContents, ProjectMetadata } from '../interfaces';
+import { ProjectMetadataList, ProjectMetadata } from '../interfaces';
 
 import { LoggerService } from './logger.service';
 
