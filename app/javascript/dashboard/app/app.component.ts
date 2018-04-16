@@ -124,7 +124,8 @@ export class AppComponent implements OnInit {
         this.userService.currentUser.subscribe( (data) => {
             const user = data.user
             if( !user && this.loggedInUser ) {
-                // TODO: User logged out
+                this.documentService.reload();
+                ( window as any ).notices.queue("Account has been logged out in another tab, refreshed page");
             }
 
             this.loggedInUser = user;
