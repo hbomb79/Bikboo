@@ -11,6 +11,7 @@
 ###
 
 class @Notices
+    focused: true
     constructor: ->
         @notices = []
 
@@ -32,6 +33,17 @@ class @Notices
                 $( document ).trigger 'notices:ready', this
             , false
 
+            document.addEventListener 'visibilitychange', =>
+                oldFocus = @focused
+                @focused = document.visibilityState == 'visible'
+
+                if oldFocus != @focused
+                    clearTimeout( @timeout ) if @timeout
+                    if @focused
+                        @timeout = setTimeout( @hideCurrent, 3000 )
+
+            , false
+
 
     queue: (notice, isAlert) ->
         @notices.push [ notice, isAlert ]
@@ -45,8 +57,9 @@ class @Notices
 
         return if $noticeContainer.attr( "data-no-interrupt" ) is 'true'
 
-        clearTimeout( @timeout ) if @timeout
-        @timeout = setTimeout( @hideCurrent, 3000 ) unless noTimeout
+        if @focused
+            clearTimeout( @timeout ) if @timeout
+            @timeout = setTimeout( @hideCurrent, 3000 ) unless noTimeout
 
         $notice.find "p"
             .text @notices[ 0 ][ 0 ]
