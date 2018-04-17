@@ -28,18 +28,17 @@ export class UserService {
                 .do(() => this.getAuthenticationDetails() )
                 .subscribe();
         });
-
-        this.currentUser
-            .do( user => this.determineSocket( user ) )
-            .subscribe();
     }
 
     protected getAuthenticationDetails( cb = (user?) => {} ) {
+        this.logger.debug("Fetching authentication details...")
         this.http.get<any>('/api/user.json', { responseType: 'json' })
             .subscribe(
                 (data) => {
+                    this.logger.debug("user authentication details retrieved", data.user);
                     this.currentUser.next( data.user );
                     cb(data.user);
+                    this.determineSocket( data.user );
                 },
                 (error) => {
                     throw Error( `Unable to fetch authentication details, error: ${error.message}` );
@@ -48,50 +47,42 @@ export class UserService {
     }
 
     protected determineSocket( user ) {
-        if( user )
+        this.logger.debug("Determining socket state using user", user)
+        if( user ) {
+            this.logger.debug("Attempting to open socket")
             this.establishSocketConnection()
-        else
+        } else {
+            this.logger.debug("Attempting to close socket")
             this.destroySocketConnection();
+        }
     }
 
     protected establishSocketConnection() {
         console.log("attempting to connect to socket")
         if( !this.socket ) {
+            this.logger.debug("Creating socket subscription")
             this.socket = this.socketService.actionCable.subscriptions.create( "UserChannel", {
-                initialized: () => {
-                    console.log("WEB SOCKET INIT");
-                },
                 received: (data) => {
-                    console.log("WEB SOCKET RECEIVED");
-                    console.log( data )
-
                     switch( data.action ) {
                         case 'destroy_session': {
                             this.logger.warn("User session destroy detected")
-                            return this.getAuthenticationDetails( this.determineSocket );
+                            return this.getAuthenticationDetails();
                         }
                     }
-                },
-                rejected: () => {
-                    console.warn("WEB SOCKET REJECTED");
-                },
-                connected: () => {
-                    //TODO: perhaps log connection status?
-                },
-                disconnected: ({willAttemptReconnect}) => {
-                    console.log("disconnected", willAttemptReconnect);
-                    //TODO: What to do here?
                 }
             })
-        } else {
-            //TODO: Check if already subscribed?
-            //TODO: Is this the right command to resubscribe?
-            this.socketService.actionCable.subscriptions.add( this.socket );
         }
     }
 
     protected destroySocketConnection() {
-        if( this.socket )
+        this.logger.debug("Attempting to destroy socket")
+        if( this.socket ) {
+            this.logger.debug("unsubscribing socket")
             this.socket.unsubscribe()
+        }
+
+        // The socket connection is being destroyed because the user has been de-authorized;
+        // Close the websocket connection entirely
+        this.socketService.disconnectCable();
     }
 }
