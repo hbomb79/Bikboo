@@ -11,7 +11,7 @@
 ###
 
 class @Notices
-    focused: true
+    focused: false
     constructor: ->
         @notices = []
 
@@ -33,6 +33,7 @@ class @Notices
                 $( document ).trigger 'notices:ready', this
             , false
 
+            @focused = document.visibilityState == 'visible'
             document.addEventListener 'visibilitychange', =>
                 oldFocus = @focused
                 @focused = document.visibilityState == 'visible'
