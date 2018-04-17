@@ -85,5 +85,6 @@ class @Notices
         @showCurrent()
 
 
-$( document ).ready =>
+window.addEventListener 'load', =>
     @notices = new Notices
+, false
