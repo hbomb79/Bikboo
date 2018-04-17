@@ -24,7 +24,7 @@ export class UserService {
     ) {
         this.getAuthenticationDetails(() => {
             Observable
-                .interval(6000)
+                .interval(60000)
                 .do(() => this.getAuthenticationDetails() )
                 .subscribe();
         });
