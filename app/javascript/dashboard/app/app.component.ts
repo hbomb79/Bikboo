@@ -7,6 +7,8 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 
 import { ProfileModalComponent } from './common/profile-modal.component';
 
+import ActionCable from 'actioncable';
+
 import { DocumentService } from './services/document.service';
 import { LoggerService } from './services/logger.service';
 import { UserService } from './services/user.service';
@@ -122,8 +124,7 @@ export class AppComponent implements OnInit {
             }
         });
 
-        this.userService.currentUser.subscribe( (data) => {
-            const user = data.user
+        this.userService.currentUser.subscribe( (user) => {
             if( !user && this.loggedInUser ) {
                 this.documentService.reload();
                 ( window as any ).notices.queue("Account has been logged out in another tab, refreshed page");

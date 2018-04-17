@@ -77,7 +77,7 @@ class SessionsController < ApplicationController
     #
     # * redirects user to root
     def destroy
-        reset_session
+        destroy_session
         redirect_to '/', notice: 'Signed out'
     end
 
@@ -102,5 +102,11 @@ private
         reset_session
         session[:auth_token] = user.auth_token
         session[:user_id] = user.id
+
+        # WebSockets don't have access to 'session', so we need to use cookies
+        # I'm leaving 'session' above as is; it will still be used to invalidate
+        # user sessions.
+        cookies.encrypted[:user_id] = user.id
+        cookies.encrypted[:auth_token] = user.auth_token
     end
 end
