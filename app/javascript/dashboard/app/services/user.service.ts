@@ -53,7 +53,7 @@ export class UserService {
             this.establishSocketConnection()
         } else {
             this.logger.debug("Attempting to close socket")
-            this.destroySocketConnection();
+            this.destroySocketConnection( true );
         }
     }
 
@@ -69,20 +69,34 @@ export class UserService {
                             return this.getAuthenticationDetails();
                         }
                     }
+                },
+                disconnected: ({willAttemptReconnect}) => {
+                    console.log("disconnected", willAttemptReconnect);
+                    if( !willAttemptReconnect ) {
+                        this.destroySocketConnection();
+                    }
                 }
-            })
+            });
+
+            (window as any).soc = this.socket
+        } else {
+            this.logger.debug("Refusing to establishSocketConnection; a socket already exists")
         }
     }
 
-    protected destroySocketConnection() {
+    protected destroySocketConnection( uninstall = false ) {
         this.logger.debug("Attempting to destroy socket")
         if( this.socket ) {
             this.logger.debug("unsubscribing socket")
             this.socket.unsubscribe()
+            this.socket = undefined;
         }
 
-        // The socket connection is being destroyed because the user has been de-authorized;
-        // Close the websocket connection entirely
-        this.socketService.disconnectCable();
+        if( uninstall ) {
+            // The socket connection is being destroyed because the user has been de-authorized;
+            // Close the websocket connection entirely as this client is no longer authorized to listen
+            // on the 'user_status:id' stream
+            this.socketService.disconnectCable();
+        }
     }
 }
