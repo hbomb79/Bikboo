@@ -1,11 +1,21 @@
 ##
-# An awesome little bit of CoffeeScript that does a few things, more or less in this order:
+# DEPRECATION NOTICE
+# 9a19b2 (redesign) - dash.v1 - 18.04.2018
+# ------------------
 #
-# - On page load, the URL used to access this page is used to determine which type of content is being viewed
-# - Depending on the type of content, an AJAX request is submitted to the server for the information
-# - The returned JSON helps to structure the page, including but not limited to the title and section layout
-# - When a link is clicked, the action is caught here and causes the next page to be loaded via AJAX
-# - Once the next page information is loaded, the old content is animated out, replaced, and animated back in
+# This coffee script file has been deprecated because the
+# users dashboard is being redesigned, using AngularJS instead of manual Ajax techniques.
+#
+# Usage of this file should be avoided. Once a removal date has been scheduled,
+# this code will be commented out; Any site functionality relying on this CoffeeScript
+# will fail at this time.
+#
+# Files `require`ing this file, should actively make efforts to remove this `require` BEFORE
+# the file is removed
+#
+# THIS CHUNK HAS NO SCHEDULED REMOVAL DATE - See issue #1 for updates
+#
+# Copyright (c) Harry Felton 2018
 #
 
 class @AjaxLoader
@@ -18,6 +28,7 @@ class @AjaxLoader
         type: 'unknown'
 
     constructor: ->
+        console.warn("[DEPRECATION NOTICE] ajax_loader.coffee is deprecated. Please see issue #1 at GitLab.com/hbomb79/bikboo/issues/1 for more information.")
         do @refreshTargetURL
         @updateLoadingPreset true
 
