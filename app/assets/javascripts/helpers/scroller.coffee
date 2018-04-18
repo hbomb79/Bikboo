@@ -13,7 +13,7 @@
 # Files `require`ing this file, should actively make efforts to remove this `require` BEFORE
 # the file is removed
 #
-# THIS CHUNK HAS NO SCHEDULED REMOVAL DATE - See issue #1 for updates
+# THIS CHUNK IS TO BE REMOVED ON SUCCESSFUL MERGE OF !6 - See issue #1, and MR !6 for updates (gitlab.com/hbomb79/bikboo)
 #
 # Copyright (c) Harry Felton 2018
 #
