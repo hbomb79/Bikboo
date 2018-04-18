@@ -142,6 +142,8 @@ export class AppComponent implements OnInit {
 
             this.loggedInUser = user;
         } );
+
+        this.onResize();
     }
 
     // Callback used to track the 'docReceived' event on the DocumentViewerComponent
