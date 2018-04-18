@@ -6,6 +6,7 @@ import { HttpRequest, HttpEvent, HttpEventType } from '@angular/common/http';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 
 import { ProfileModalComponent } from './common/profile-modal.component';
+import { DocumentViewerComponent } from './common/document-viewer.component';
 
 import ActionCable from 'actioncable';
 
@@ -16,6 +17,8 @@ import { LocationService } from './services/location.service';
 import { SocketService } from './services/socket.service';
 
 import { DocumentContents, UserInformation } from './interfaces';
+
+import $ from 'jquery';
 
 import templateString from './template.html';
 @Component({
@@ -74,8 +77,13 @@ export class AppComponent implements OnInit {
 
     @ViewChild( 'profileToggle' ) profileToggle:ElementRef;
 
+    @ViewChild( DocumentViewerComponent )
+    docViewer:DocumentViewerComponent;
+
     currentUrl:string;
     currentDocument:DocumentContents;
+
+    private resizeTimeout:number;
 
     @HostBinding('class')
     protected hostClasses:string = '';
@@ -229,7 +237,12 @@ export class AppComponent implements OnInit {
         }
     }
 
-    // @HostListener('window:resize', ['$event.target.innerWidth'])
-    // onResize() {
-    // }
+    @HostListener('window:resize', ['$event.target.innerWidth'])
+    onResize() {
+        clearTimeout( this.resizeTimeout );
+        this.resizeTimeout = setTimeout( () => {
+            const $docViewer = $( this.docViewer.hostElement );
+            $docViewer.css( 'min-height', $( window ).height() - $docViewer.offset().top )
+        }, 50 );
+    }
 }
