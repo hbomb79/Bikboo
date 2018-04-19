@@ -32,6 +32,16 @@ class ProjectsController < ApplicationController
 
     def new
         @project = Project.new
+        respond_to do |format|
+            format.html
+            format.json do
+                render :json => {
+                    content: render_to_string( :layout => false, :formats => [:html] ),
+                    title: 'New Project',
+                    sub_title: 'New Project'
+                }
+            end
+        end
     end
 
     def create

@@ -59,7 +59,6 @@ body
             transform: scale(1)
 
         app-document-viewer
-
             > div
                 /* Dynamic */
                 opacity: 0
@@ -71,6 +70,9 @@ body
                 -webkit-transition: opacity 200ms ease, transform 200ms ease
                 -o-transition: opacity 200ms ease, transform 200ms ease
                 transition: opacity 200ms ease, transform 200ms ease
+
+                position: relative
+                height: 100%
 
                 &.active
                     opacity: 1

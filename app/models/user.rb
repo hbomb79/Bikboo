@@ -9,9 +9,13 @@ class User < ApplicationRecord
     end
 
     def generate_auth_token
+        logger.warn "Generating auth token"
         until update( auth_token: SecureRandom.uuid )
-            puts "WARNING: Regenerating auth_token for user #{name}. Failed to update. Likely due to auth_token not being unique."
+            logger.warn "Regenerating auth_token for user #{name}. Failed to update. Likely due to auth_token not being unique."
         end
+
+        logger.warn("Revoking auth token for user #{id}")
+        ActionCable.server.broadcast "user_status:#{id}", { action: "revoke_auth_token" }
     end
 
     ##

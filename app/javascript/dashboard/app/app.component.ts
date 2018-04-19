@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
     currentUrl:string;
     currentDocument:DocumentContents;
 
-    private resizeTimeout:number;
+    private resizeTimeout:any;
 
     @HostBinding('class')
     protected hostClasses:string = '';
@@ -142,8 +142,6 @@ export class AppComponent implements OnInit {
 
             this.loggedInUser = user;
         } );
-
-        this.onResize();
     }
 
     // Callback used to track the 'docReceived' event on the DocumentViewerComponent
@@ -193,6 +191,8 @@ export class AppComponent implements OnInit {
             `tree-${pageSlug.match(/[^-]+/)[0]}`,
             `${this.isStarting ? "not-" : ""}ready`
         ].join(' ')
+
+        this.onResize();
     }
 
     toggleProfileModal() {
@@ -239,12 +239,12 @@ export class AppComponent implements OnInit {
         }
     }
 
-    @HostListener('window:resize', ['$event.target.innerWidth'])
+    @HostListener('window:resize')
     onResize() {
         clearTimeout( this.resizeTimeout );
         this.resizeTimeout = setTimeout( () => {
             const $docViewer = $( this.docViewer.hostElement );
-            $docViewer.css( 'min-height', $( window ).height() - $docViewer.offset().top )
+            $docViewer.css( 'height', $( window ).height() - $docViewer.offset().top )
         }, 50 );
     }
 }
