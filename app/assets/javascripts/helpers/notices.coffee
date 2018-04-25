@@ -14,6 +14,15 @@ class @Notices
     focused: false
     constructor: ->
         @notices = []
+        @$noticeContainer = $ "#flash-notices"
+        @$notice = @$noticeContainer.find ".notice" if @$noticeContainer
+        @popCurrent() if @notices.length
+
+        setTimeout( () =>
+            $( document ).trigger( 'notices:ready', this )
+        , 0 )
+
+        @focused = document.visibilityState == 'visible'
 
         $( document )
             .on 'mouseenter', 'div#flash-notices .notice', =>
@@ -23,28 +32,16 @@ class @Notices
             .on "click", "div#flash-notices .notice #notice-close", (event) =>
                 @hideCurrent()
 
-        $( document ).ready =>
-            @$noticeContainer = $ "#flash-notices"
-            @$notice = @$noticeContainer.find ".notice" if @$noticeContainer
-
-            @popCurrent() if @notices.length
-
-            window.addEventListener 'load', =>
-                $( document ).trigger 'notices:ready', this
-            , false
-
+        document.addEventListener 'visibilitychange', =>
+            oldFocus = @focused
             @focused = document.visibilityState == 'visible'
-            document.addEventListener 'visibilitychange', =>
-                oldFocus = @focused
-                @focused = document.visibilityState == 'visible'
 
-                if oldFocus != @focused
-                    clearTimeout( @timeout ) if @timeout
-                    if @focused
-                        @timeout = setTimeout( @hideCurrent, 3000 )
+            if oldFocus != @focused
+                clearTimeout( @timeout ) if @timeout
+                if @focused
+                    @timeout = setTimeout( @hideCurrent, 3000 )
 
-            , false
-
+        , false
 
     queue: (notice, isAlert) ->
         @notices.push [ notice, isAlert ]
