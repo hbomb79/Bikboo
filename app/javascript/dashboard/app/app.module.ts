@@ -14,6 +14,7 @@ import { ProfileModalComponent } from './common/profile-modal.component.ts';
 import { ProjectListComponent } from './dashboard/project-list.component.ts';
 import { ProjectTileComponent } from './dashboard/project-tile.component.ts';
 import { ProjectViewerComponent } from './dashboard/project-viewer.component.ts';
+import { ProjectCreateComponent } from './dashboard/project-create.component.ts';
 
 /* Services */
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
@@ -27,7 +28,7 @@ import { SocketService } from './services/socket.service';
 
 import { EmbeddedComponentsService, EMBEDDED_COMPONENTS } from './services/embeddedComponents.service';
 
-const embeddableComponents = [ ProjectListComponent, ProjectTileComponent, ProjectViewerComponent ]
+const embeddableComponents = [ ProjectListComponent, ProjectTileComponent, ProjectViewerComponent, ProjectCreateComponent ]
 
 if( process.env.NODE_ENV == 'production' )
     enableProdMode()
@@ -41,7 +42,8 @@ if( process.env.NODE_ENV == 'production' )
 
         ProjectListComponent,
         ProjectTileComponent,
-        ProjectViewerComponent
+        ProjectViewerComponent,
+        ProjectCreateComponent
     ],
     imports: [
         BrowserModule,
