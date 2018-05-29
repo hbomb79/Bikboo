@@ -8,7 +8,7 @@ import { switchMap } from 'rxjs/operators';
 import 'rxjs/add/observable/interval';
 
 import { LoggerService } from '../services/logger.service';
-import { ProjectService } from '../services/project.service';
+import { LocationService } from '../services/location.service';
 
 import $ from 'jquery';
 
@@ -25,8 +25,8 @@ import $ from 'jquery';
             <textarea placeholder="This field is optional" name="desc"></textarea>
         </section>
         <section id="tos">
-            <input type="checkbox" id="agree-terms">
-            <span for="agree-terms">I agree to the <a href="#">terms and conditions of service</a>.</span>
+            <input type="checkbox" name="tos">
+            <span for="tos">I agree to the <a href="#">terms and conditions of service</a>.</span>
         </section>
         <section id="submit">
             <input type="submit" name="commit" value="Create Project" class="button" data-disable-with="Create Project">
@@ -39,7 +39,7 @@ export class ProjectCreateComponent implements AfterViewInit {
 
     @ViewChild("projectCreate") formElement:ElementRef;
 
-    constructor(private logger: LoggerService, private projectService: ProjectService) { }
+    constructor(private logger: LoggerService, private locationService: LocationService) { }
 
     ngAfterViewInit() {
         console.log( $(this.formElement) );
@@ -49,12 +49,11 @@ export class ProjectCreateComponent implements AfterViewInit {
             if( ( typeof event.detail[0] ) == "object" && event.detail[0].error ) {
                 this.creationError( event.detail );
             } else {
-                (window as any).notices.queue("We couldn't create a project for you; something's wrong on our end. Rest assured that we're working on a fix as fast as we can!", true);
+                (window as any).notices.queue("We couldn't create a project for you because something's wrong on our end. Rest assured that we're working on a fix as fast as we can!", true);
                 console.error("[FATAL] Uncaught exception: Unable to create a project due to unidentifiable error (no JSON response from server REST endpoint). Dump follows");
                 console.log( event );
             }
-        }).on("ajax:success", (event, xhr) => {
-            console.log("SUCCESS");
+        }).on("ajax:success", (event:any) => {
             this.creationSuccess( event.detail );
         });
     }
@@ -64,10 +63,11 @@ export class ProjectCreateComponent implements AfterViewInit {
             // Highlight invalid fields (found in details.fields)
         }
 
-        (window as any).notices.queue(details[0].error, true)
+        (window as any).notices.queue(details[0].error, true);
     }
 
     protected creationSuccess( details:any ) {
-
+        (window as any).notices.queue(details[0].notice);
+        this.locationService.go(`/dashboard/project/${details[0].project_id}`);
     }
 }
