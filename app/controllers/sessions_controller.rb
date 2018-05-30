@@ -77,7 +77,18 @@ class SessionsController < ApplicationController
     #
     # * redirects user to root
     def destroy
-        destroy_session
+        # If the get param 'revoke' is provided, the users authentication token is regenerated
+        # logging them out of all devices
+        if params[:revoke] then
+            logger.warn "Session destruction confirmed; authentication token regenerated."
+            current_user.generate_auth_token
+            destroy_session true
+        else
+            destroy_session
+        end
+
+        # Redirect the user back to root with a notice indicating sign out successful.
+        #TODO: Potentially add ability to respond via JSON for Angular front-end.
         redirect_to '/', notice: 'Signed out'
     end
 

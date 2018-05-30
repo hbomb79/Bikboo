@@ -72,7 +72,7 @@ private
         cookies.delete :user_id
         cookies.delete :auth_token
 
-        ActionCable.server.broadcast "user_status:#{current_user_id}", { action: "destroy_session" }
+        ActionCable.server.broadcast "user_status:#{current_user_id}", { action: "destroy_session" } unless silent
     end
 
     helper_method :current_user, :url_absolute?
