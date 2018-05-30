@@ -216,10 +216,8 @@ export class AppComponent implements OnInit {
 
         // If the profile modal is open, and the user clicked either on the profile toggle button (the user icon)
         // or clicked outside the modal, close the modal and ignore the click.
-        if(
-            this.profileModal && this.profileModal.isOpen &&
-            !( this.profileModal.nativeElement.contains( eventTarget ) || this.profileToggle.nativeElement.contains( eventTarget ) )
-        ) {
+        let modalOpen:boolean = this.profileModal && this.profileModal.isOpen;
+        if( modalOpen && !( this.profileModal.nativeElement.contains( eventTarget ) || this.profileToggle.nativeElement.contains( eventTarget ) ) ) {
             this.profileModal.toggle();
             return false;
         }
@@ -242,7 +240,15 @@ export class AppComponent implements OnInit {
             // itself.
             // If all goes to plan, 'false' will be returned, stopping
             // the browser from processing the click any further.
-            return this.locationService.handleAnchorClick( current )
+            if( !this.locationService.handleAnchorClick( current ) ) {
+                if( modalOpen ) {
+                    this.profileModal.toggle();
+                }
+
+                return false;
+            }
+
+            return true
         }
     }
 
