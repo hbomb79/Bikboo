@@ -11,7 +11,8 @@ export interface UserInformation {
 export interface DocumentContents {
     title: string,
     sub_title?: string,
-    content: string
+    content: string,
+    banner_link?: string
 }
 
 export interface ProjectMetadata {
