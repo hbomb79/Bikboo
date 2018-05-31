@@ -64,7 +64,7 @@ private
         end
     end
 
-    def destroy_session(silent)
+    def destroy_session(silent=false)
         return unless current_user
         current_user_id = current_user.id
 
