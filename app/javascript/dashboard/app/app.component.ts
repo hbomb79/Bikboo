@@ -204,13 +204,7 @@ export class AppComponent implements OnInit {
             `${this.isStarting ? "not-" : ""}ready`
         ].join(' ')
 
-        setTimeout(() => {
-            const activeDiv = $( this.docViewer.hostElement ).find("div#spacer");
-            console.log(activeDiv);
-            console.log($("nav"));
-            console.log($("nav").outerHeight());
-            activeDiv.css("padding-top", $("nav").outerHeight());
-        }, 0);
+        this.onResize();
     }
 
     toggleProfileModal() {
@@ -265,10 +259,10 @@ export class AppComponent implements OnInit {
 
     @HostListener('window:resize')
     onResize() {
-        // clearTimeout( this.resizeTimeout );
-        // this.resizeTimeout = setTimeout( () => {
-        //     const $docViewer = $( this.docViewer.hostElement );
-        //     $docViewer.css( 'height', $( window ).height() - $docViewer.offset().top )
-        // }, 50 );
+        clearTimeout( this.resizeTimeout );
+        this.resizeTimeout = setTimeout( () => {
+            const activeDiv = $( this.docViewer.hostElement ).find("div.dynamic");
+            activeDiv.css("padding-top", this.DOMConfig.banner && $("nav").outerHeight() || 0);
+        }, 50 );
     }
 }

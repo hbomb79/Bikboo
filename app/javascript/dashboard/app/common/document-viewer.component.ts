@@ -30,7 +30,7 @@ const ANIMATION_EXCLUDE:string = 'no-animations';
 
 @Component({
     selector: 'app-document-viewer',
-    template: `<div id="spacer" *ngIf="hasBanner"></div>`
+    template: ``
 })
 export class DocumentViewerComponent implements DoCheck, OnDestroy {
     hostElement: HTMLElement;
