@@ -30,7 +30,7 @@ const ANIMATION_EXCLUDE:string = 'no-animations';
 
 @Component({
     selector: 'app-document-viewer',
-    template: ''
+    template: `<div id="spacer" *ngIf="hasBanner"></div>`
 })
 export class DocumentViewerComponent implements DoCheck, OnDestroy {
     hostElement: HTMLElement;
@@ -84,6 +84,8 @@ export class DocumentViewerComponent implements DoCheck, OnDestroy {
         }
     }
 
+    @Input() hasBanner:boolean;
+
     constructor(
         elementRef: ElementRef,
         @Inject( ViewContainerRef ) private viewContainerRef,
@@ -95,6 +97,9 @@ export class DocumentViewerComponent implements DoCheck, OnDestroy {
         // Store a reference to the host element so that we can
         // swap views later (see this.rotateViews).
         this.hostElement = elementRef.nativeElement;
+
+        $( this.currentView ).addClass("dynamic");
+        $( this.pendingView ).addClass("dynamic");
 
         this.docContents$
             .switchMap( doc => this.loadNextView( doc ) )

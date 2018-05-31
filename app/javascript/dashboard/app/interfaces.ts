@@ -12,7 +12,8 @@ export interface DocumentContents {
     title: string,
     sub_title?: string,
     content: string,
-    banner_link?: string
+    banner_link?: string,
+    no_banner?: boolean
 }
 
 export interface ProjectMetadata {
