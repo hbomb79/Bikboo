@@ -108,9 +108,4 @@ private
 
         #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
     end
-
-private
-    def construct_payload
-        return current_user.projects
-    end
 end
