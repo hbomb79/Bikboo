@@ -60,16 +60,13 @@ export class ProfileModalComponent implements OnInit {
 
     @HostListener('click', ['$event.target', '$event.button', '$event.ctrlKey', '$event.metaKey'])
     onClick( eventTarget: HTMLElement, button: number, ctrlKey: boolean, metaKey: boolean ) {
-        if( button !== 0 || ctrlKey || metaKey ) {
-            return true;
-        } else if ( !this.signOutButton.nativeElement.contains( eventTarget ) ) {
+        if( button !== 0 || ctrlKey || metaKey || !this.signOutButton.nativeElement.contains( eventTarget ) ) {
             return true;
         }
 
         // To have gotten to this point, we must have clicked on the signOutButton child.
         // Sign the user out via the user service (this will handle all incoming websocket pings
         // so that we don't throw a 401 unauthorized error at the user while signing out).
-        console.warn("Blocking anchor tag event and logging out");
         this.userService.signOut();
         return false;
     }

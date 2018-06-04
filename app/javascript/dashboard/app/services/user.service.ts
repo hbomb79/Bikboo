@@ -34,7 +34,6 @@ export class UserService {
     }
 
     signOut() {
-        console.log("Signing out")
         // When signing out, the server will transmit a 'destroy_session' ping,
         // telling the client that the user has signed out in another tab.
         // This isn't correct however, we want to supress this message while signing out
@@ -76,15 +75,12 @@ export class UserService {
         this.socket = this.socketService.actionCable.subscriptions.create( "UserChannel", {
             received: (data) => {
                 setTimeout( () => {
-                    console.warn("Websocket event fired of data");
-                    console.log( data );
                     switch( data.action ) {
                         case 'destroy_session': {
                             return this.getAuthenticationDetails((user) => {
                                 if( !user ) {
                                     if( this.signingOut ) {
                                         (window as any).notices.queue("Signed out!");
-                                        console.warn("Resetting sign out status");
                                         this.signingOut = false;
                                         this.locationService.go("/");
                                     } else {
@@ -98,7 +94,6 @@ export class UserService {
                                 if( !user ) {
                                     if( this.signingOut ){
                                         (window as any).notices.queue("Signed out of all devices");
-                                        console.warn("Resetting sign out status");
                                         this.signingOut = false;
                                         this.locationService.go("/");
                                     } else {
