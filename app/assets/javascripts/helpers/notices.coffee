@@ -11,8 +11,18 @@
 ###
 
 class @Notices
+    focused: false
     constructor: ->
         @notices = []
+        @$noticeContainer = $ "#flash-notices"
+        @$notice = @$noticeContainer.find ".notice" if @$noticeContainer
+        @popCurrent() if @notices.length
+
+        setTimeout( () =>
+            $( document ).trigger( 'notices:ready', this )
+        , 0 )
+
+        @focused = document.visibilityState == 'visible'
 
         $( document )
             .on 'mouseenter', 'div#flash-notices .notice', =>
@@ -22,16 +32,16 @@ class @Notices
             .on "click", "div#flash-notices .notice #notice-close", (event) =>
                 @hideCurrent()
 
-        $( document ).ready =>
-            @$noticeContainer = $ "#flash-notices"
-            @$notice = @$noticeContainer.find ".notice" if @$noticeContainer
+        document.addEventListener 'visibilitychange', =>
+            oldFocus = @focused
+            @focused = document.visibilityState == 'visible'
 
-            @popCurrent() if @notices.length
+            if oldFocus != @focused
+                clearTimeout( @timeout ) if @timeout
+                if @focused
+                    @timeout = setTimeout( @hideCurrent, 3000 )
 
-            window.addEventListener 'load', =>
-                $( document ).trigger 'notices:ready', this
-            , false
-
+        , false
 
     queue: (notice, isAlert) ->
         @notices.push [ notice, isAlert ]
@@ -45,8 +55,9 @@ class @Notices
 
         return if $noticeContainer.attr( "data-no-interrupt" ) is 'true'
 
-        clearTimeout( @timeout ) if @timeout
-        @timeout = setTimeout( @hideCurrent, 3000 ) unless noTimeout
+        if @focused
+            clearTimeout( @timeout ) if @timeout
+            @timeout = setTimeout( @hideCurrent, 3000 ) unless noTimeout
 
         $notice.find "p"
             .text @notices[ 0 ][ 0 ]
@@ -71,5 +82,6 @@ class @Notices
         @showCurrent()
 
 
-$( document ).ready =>
+window.addEventListener 'load', =>
     @notices = new Notices
+, false
