@@ -1,4 +1,25 @@
+##
+# DEPRECATION NOTICE
+# c8339d (notifications) - dash.v02 - 2.04.2018
+# ------------------
+#
+# This coffee script file has been deprecated because the
+# users dashboard is being redesigned.
+#
+# Usage of this file should be avoided. Once a removal date has been scheduled,
+# this code will be commented out; Any site functionality relying on this CoffeeScript
+# will fail at this time.
+#
+# THIS CHUNK IS TO BE REMOVED ON SUCCESSFUL MERGE OF !6 - See issue #1, and MR !6 for updates (gitlab.com/hbomb79/bikboo)
+#
+# Copyright (c) Harry Felton 2018
+#
+
+console.warn "DEPRECATION WARNING: This file (helpers/projects_pane.coffee) has been deprecated. It will be removed in the future, migrate code to new CoffeeScript"
+
 class @ProjectsPane
+    errorState: false
+    isLoading: false
     constructor: ->
         # Assign event handlers to handle opening, closing, pushing and discarding
         # of projects.
@@ -35,35 +56,47 @@ class @ProjectsPane
         $wrapper.find ".notice"
             .fadeOut 250
 
-        if projectCount and not $panel.hasClass "open"
-            $panel
-                .stop true
-                .addClass "open"
-                .show().css
-                    opacity: 0,
-                    marginTop: "50px"
-                .animate
-                    marginTop: 0,
-                    opacity: 1
-                , 250
+        if @isLoading
+            @hidePanel ->
+                $wrapper.find ".notice.loading"
+                    .fadeIn 250
+        else if projectCount and not $panel.hasClass "open"
+            do @showPanel
         else if not projectCount and $panel.hasClass "open"
-            $panel
-                .stop true
-                .animate
-                    marginTop: '50px',
-                    opacity: 0
-                , 150
-                .promise().done ->
-                    $panel.hide().removeClass "open"
-
-                    $wrapper.find ".notice#no-projects"
-                        .fadeIn 250
+            @hidePanel ->
+                $wrapper.find ".notice#no-projects"
+                    .fadeIn 250
 
         setTimeout ->
             $panel.find ".hiding"
                 .addClass "hidden"
                 .removeClass "hiding"
         , 250
+
+    hidePanel: (done) ->
+        $panel = $ ".column#projects .wrapper .panel#projects"
+        $panel
+            .stop true
+            .animate
+                marginTop: '50px',
+                opacity: 0
+            , 150
+            .promise().done ->
+                $panel.hide().removeClass "open"
+
+                do done if done
+
+    showPanel: ->
+        $ ".column#projects .wrapper .panel#projects"
+            .stop true
+            .addClass "open"
+            .show().css
+                opacity: 0,
+                marginTop: "50px"
+            .animate
+                marginTop: 0,
+                opacity: 1
+            , 250
 
     ##
     # Spawns an empty project which can be edited live inside the project panel.
@@ -106,7 +139,6 @@ class @ProjectsPane
         $placeholder.find ".button.placeholder-close"
             .addClass "disabled"
 
-        #TODO: Actually send form data
         $.ajax
             url: '/projects'
             dataType: 'json'
@@ -126,6 +158,8 @@ class @ProjectsPane
                 console.log payload
                 console.log state
 
+                notices.queue "Created project!"
+                do @removePlaceholder
             error: (xhr, state, display) =>
                 console.error "Ajax error while pushing new project. #{state}, #{display}. XHR dump follows"
                 console.debug xhr
@@ -172,7 +206,27 @@ class @ProjectsPane
     # - errorCallback: A callback executed when the Ajax request errors (see jQuery documentation for information on 'error' Ajax callbacks)
     # - insertionCallback: A callback executed just before the DOM is updated with the new projects panel. Use this callback to adjust the information inside
     fetchProjects: (completeCallback, successCallback, errorCallback, insertionCallback) ->
-        # TODO
+        # Create a fetch request for project list
+        $.ajax
+            url: '/projects'
+            dataType: 'json'
+            method: 'GET'
+            complete: (event) =>
+                # Fetch complete!
+                #TODO: Figure out if I need this or not
+
+            success: (payload, state, xhr) =>
+                # Successful fetch of the project information.
+                $panel = $ "<div class='panel' id='projects'></div>"
+
+                # Synthesize a panel containing the projects
+
+                # Replace the current panel with the new one
+
+                # Force an update of the panel
+                
+            error: (xhr, state, display) =>
+                
 
     ##
     # If a placeholder exists, the help screen will appear over the form
