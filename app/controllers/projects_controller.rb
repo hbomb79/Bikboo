@@ -70,8 +70,6 @@ class ProjectsController < ApplicationController
                 render :json => { error: "Failed to create project, validation failed." }, status: :internal_server_error
             end
         end
-
-        #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
     end
 
     def get_metadata
