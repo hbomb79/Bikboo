@@ -1,3 +1,22 @@
+##
+# DEPRECATION NOTICE
+# c8339d (notifications) - dash.v02 - 2.04.2018
+# ------------------
+#
+# This coffee script file has been deprecated because the
+# users dashboard is being redesigned.
+#
+# Usage of this file should be avoided. Once a removal date has been scheduled,
+# this code will be commented out; Any site functionality relying on this CoffeeScript
+# will fail at this time.
+#
+# THIS CHUNK IS TO BE REMOVED ON SUCCESSFUL MERGE OF !6 - See issue #1, and MR !6 for updates (gitlab.com/hbomb79/bikboo)
+#
+# Copyright (c) Harry Felton 2018
+#
+
+console.warn "DEPRECATION WARNING: This file (helpers/activity_pane.coffee) has been deprecated. It will be removed in the future, migrate code to new CoffeeScript"
+
 class @ActivityPane
     recentMode: true
     errorState: false
@@ -80,17 +99,16 @@ class @ActivityPane
                 .stop( true ).fadeIn( 250 )
                 .find( "pre#error" ).text( @errorState )
 
-        else if @recentMode
-            if @cache.total > 0 and @cache.loaded is 0
-                # In recent mode, however no recent notifications could be found.
-                # Prompt the user to view older notifications
-                $ ".column#notifications .wrapper .notice#no-recent"
-                    .stop( true ).fadeIn( 250 )
-            else if @cache.total is 0
-                # In recent mode, however there are no notifications.
-                # Tell the user their account has no recorded activity
-                $ ".column#notifications .wrapper .notice#no-activity"
-                    .stop( true ).fadeIn( 250 )
+        else if @recentMode and @cache.total > 0 and @cache.loaded is 0
+            # In recent mode, however no recent notifications could be found.
+            # Prompt the user to view older notifications
+            $ ".column#notifications .wrapper .notice#no-recent"
+                .stop( true ).fadeIn( 250 )
+        else if @cache.total is 0
+            # In recent mode, however there are no notifications.
+            # Tell the user their account has no recorded activity
+            $ ".column#notifications .wrapper .notice#no-activity"
+                .stop( true ).fadeIn( 250 )
 
         $panel = $ ".column#notifications .wrapper .panel#notifs"
         if @cache.loaded > 0 and not $panel.hasClass "open"

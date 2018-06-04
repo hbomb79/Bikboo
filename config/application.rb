@@ -18,5 +18,10 @@ module HerokuApp
     # Make rails use SASS syntax instead of SCSS syntax.
     # Purely because I personally prefer the cleaner syntax
     config.sass.preferred_syntax = :sass
+
+    # Would like to see content length for JSON
+    # responses so we can use a real progress bar
+    # in AngularJS
+    config.middleware.use Rack::ContentLength
   end
 end
