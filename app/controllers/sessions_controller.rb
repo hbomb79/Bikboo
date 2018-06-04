@@ -88,8 +88,14 @@ class SessionsController < ApplicationController
         end
 
         # Redirect the user back to root with a notice indicating sign out successful.
-        #TODO: Potentially add ability to respond via JSON for Angular front-end.
-        redirect_to '/', notice: 'Signed out'
+        respond_to do |format|
+            format.html { redirect_to '/', notice: 'Signed out' }
+            format.json do
+                render :json => {
+                    content: 'Signed out!'
+                }, status: :ok
+            end
+        end
     end
 
 private

@@ -1,5 +1,4 @@
 bikboo-shell.tree-dashboard
-    @import 'partials/dashboard/banner'
     @import 'partials/form'
     
     .min-container
@@ -46,10 +45,10 @@ bikboo-shell.tree-dashboard
                 &:hover
                     color: $darkb-accent
 
-        section#projects .content
+        section.main .content
             padding: 1rem
 
-            .empty#no-projects
+            .empty-notice
                 @extend .abs-center
                 text-align: center
 
@@ -227,127 +226,3 @@ footer
 
     100%
         background-position-x: 2000px
-
-
-/*
-    DEPRECATION NOTICE
-    ------------------
-
-    The following chunk in this SASS file has been deprecated as the
-    users dashboard was redesigned.
-
-    To prevent accidental use, the code in question has been commented out.
-
-    THIS CHUNK IS TO BE REMOVED ON SUCCESSFUL MERGE OF !6 - See issue #1, and MR !6 for updates (gitlab.com/hbomb79/bikboo)
-
-    CHUNK FOLLOWS: */
-
-// body .container#main
-//     margin-top: 55px
-//     padding: 1rem 0
-//     display: flex
-
-//     a
-//         color: $bg-accent
-
-//         &:hover
-//             color: #0178b1
-//             text-decoration: underline
-
-//     .sidebar
-//         padding: 1rem
-//         width: 26%
-//         display: inline-block
-
-//         .wrapper
-//             padding: 1rem
-
-//     main
-//         padding: 1rem 2rem
-//         width: 73%
-//         float: right
-//         flex: auto
-
-//         .title
-//             color: #5f5f5f
-//             font-weight: 100
-//             font-family: 'Roboto'
-//             margin: 0
-
-//         h1.title
-//             color: #4a4a4a
-//             padding-bottom: 4px
-//             border-bottom: 1px solid #eee
-
-//         section
-//             margin: 2rem 0
-
-//             .title
-//                 margin: 0
-
-//             .listing
-//                 padding: 3px 10px
-//                 border-radius: 3px
-//                 margin: 1rem
-
-//                 &.error
-//                     border: solid #9c0000 2px
-//                     box-shadow: inset 0px 0px 4px -1px #9c0000
-// END OF DEPRECATED CHUNK.
-
-/*
- * DEPRECATION NOTICE
- * 16baaa (notifications) - dash.v02 - 31.03.2018
- * ------------------
- *
- * The following chunk in this SASS file has been deprecated as the
- * users dashboard is being redesigned.
- *
- * Usage of this file should be avoided. Once a removal date has been scheduled,
- * this code will be commented out; Any site functionality relying on this SASS
- * will fail at this time.
- *
- * THIS CHUNK IS TO BE REMOVED ON SUCCESSFUL MERGE OF !6 - See issue #1, and MR !6 for updates (gitlab.com/hbomb79/bikboo)
- *
- * Copyright (c) Harry Felton 2018
- */
-
-// #main
-//     margin-top: $bannerHeight
-//     width: 100%
-//     max-width: none
-
-//     a:not(.button)
-//         color: $bg-accent
-
-//     main
-//         @extend .abs-stretch
-//         min-width: $minContainerWidth
-
-//         top: $bannerHeight
-
-//         .column
-//             position: relative
-
-//         @import 'partials/dashboard/projects'
-//         @import 'partials/dashboard/activity'
-
-//         .column .wrapper .notice
-//             @extend .abs-center
-            
-//             width: 100%
-//             padding: 0 1rem
-
-//             text-align: center
-//             h3
-//                 font-weight: 600
-//                 margin: 5px 0px
-//                 color: #616161
-
-//             span, p
-//                 font-style: italic
-//                 color: #939090
-
-//             pre
-//                 color: #a2a2a2
-//                 font-weight: 900

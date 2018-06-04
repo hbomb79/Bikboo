@@ -18,19 +18,23 @@ class ProjectsController < ApplicationController
     end
 
     def show
-        @project = Project.find_by_id params[:id]
+        @project = Project.find_by_id( params[:id] )
         auth = ( @project && @project.user_id ) == current_user.id
 
-        respond_to do |format|
-            format.html
-            format.json do
-                render :json => {
-                    content: render_to_string( :layout => false, :formats => [:html] ),
-                    title: 'Project Information',
-                    sub_title: auth ? ( ( @project && @project.title ) || 'Unnamed Project' ) : false,
-                    banner_link: @project ? "<a href=\"/dashboard/project/#{@project.id}/edit\" class=\"edit_project\" title=\"Edit project details\"><span>Edit</span></a>" : ""
-                }
+        if @project then
+            respond_to do |format|
+                format.html
+                format.json do
+                    render :json => {
+                        content: render_to_string( :layout => false, :formats => [:html] ),
+                        title: 'Project Information',
+                        sub_title: auth ? ( ( @project && @project.title ) || 'Unnamed Project' ) : false,
+                        banner_link: @project ? "<a href=\"/dashboard/project/#{@project.id}/edit\" class=\"edit_project\" title=\"Edit project details\"><span>Edit</span></a>" : ""
+                    }
+                end
             end
+        else
+            render :json => {content: "Project not found"}, status: :not_found
         end
     end
 
@@ -66,6 +70,13 @@ class ProjectsController < ApplicationController
                 render :json => { error: "Failed to create project, validation failed." }, status: :internal_server_error
             end
         end
+
+        #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
+    end
+
+private
+    def construct_payload
+        return current_user.projects
     end
 
     def get_metadata
