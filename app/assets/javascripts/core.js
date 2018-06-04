@@ -15,5 +15,9 @@
 //= require rails-ujs
 //= require jquery
 //= require jquery_ujs
-//= require helpers/notices
-//= require helpers/scroller
+// require helpers/notices
+// require helpers/scroller
+
+$(document).on( "click", ".google-auth-link", function(){
+    $(this).addClass( "loading inplace" );
+});

@@ -4,7 +4,7 @@ class SessionsController < ApplicationController
     # with a provider (Google).
     #
     # Check the Authorizations for a provider with the same
-    # uid. If one is found, log in to the user associatted.
+    # uid. If one is found, log in to the user associated.
     #
     # If none is found, create a new Authorization model
     # linking to a new user (created from the provider payload).
@@ -34,7 +34,7 @@ class SessionsController < ApplicationController
                 flash.notice = "Signed in!"
             rescue ActiveRecord::RecordNotFound
                 @auth.destroy!
-                flash.alert = "Unable to sigin. Authorization points to missing user account. Please try again now that dwindling authentications have been destroyed."
+                flash.alert = "Unable to sign in. Authorization points to missing user account. Please try again now that dwindling authentications have been destroyed."
             end
         else
             # No authorization found. Sign up using the details provided by the provider
@@ -42,8 +42,8 @@ class SessionsController < ApplicationController
             # First; check that a user with the same email address doesn't already exist,
             # and that the email in question is valid.
             if not verify_google_email
-                # Reject new sesssion! The Google email provided has not been verified
-                flash.alert = "Failed to signup. Email address (#{info['email']}) has not been verified. Please verify this email on Google and retry"
+                # Reject new session! The Google email provided has not been verified
+                flash.alert = "Failed to sign up. Email address (#{info['email']}) has not been verified. Please verify this email on Google and retry"
             elsif User.find_by_email info['email']
                 # The email is already attached to an account. Reject this
                 # sign in attempt (TODO: provide a user fix for this, there's no
@@ -77,7 +77,18 @@ class SessionsController < ApplicationController
     #
     # * redirects user to root
     def destroy
-        reset_session
+        # If the get param 'revoke' is provided, the users authentication token is regenerated
+        # logging them out of all devices
+        if params[:revoke] then
+            logger.warn "Session destruction confirmed; authentication token regenerated."
+            current_user.generate_auth_token
+            destroy_session true
+        else
+            destroy_session
+        end
+
+        # Redirect the user back to root with a notice indicating sign out successful.
+        #TODO: Potentially add ability to respond via JSON for Angular front-end.
         redirect_to '/', notice: 'Signed out'
     end
 
@@ -102,5 +113,11 @@ private
         reset_session
         session[:auth_token] = user.auth_token
         session[:user_id] = user.id
+
+        # WebSockets don't have access to 'session', so we need to use cookies
+        # I'm leaving 'session' above as is; it will still be used to invalidate
+        # user sessions.
+        cookies.encrypted[:user_id] = user.id
+        cookies.encrypted[:auth_token] = user.auth_token
     end
 end
