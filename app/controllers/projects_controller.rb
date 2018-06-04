@@ -74,11 +74,6 @@ class ProjectsController < ApplicationController
         #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
     end
 
-private
-    def construct_payload
-        return current_user.projects
-    end
-
     def get_metadata
         payload = { project_count: current_user.projects.count, projects: [] }
         projects = payload[:projects]
@@ -107,5 +102,10 @@ private
         end
 
         #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
+    end
+
+private
+    def construct_payload
+        return current_user.projects
     end
 end
