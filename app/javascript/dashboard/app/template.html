@@ -9,7 +9,7 @@
 
             <a id="profile" href="{{currentUrl}}#" class="right no-follow" *ngIf="loggedInUser" (click)="toggleProfileModal()" #profileToggle>
                 <img src="{{loggedInUser.image_url}}?size=40">
-                <span>&#x25BC;</span>
+                <!-- <span>&#x25BC;</span> -->
             </a>
 
             <app-profile-modal *ngIf="loggedInUser" [user]="loggedInUser"></app-profile-modal>
