@@ -64,7 +64,8 @@ export class AppComponent implements OnInit {
     DOMConfig = {
         banner: false as boolean,
         subBanner: '' as string,
-        bannerLink: false as any
+        bannerLink: false as any,
+        breadcrumbs: []
     };
 
     isStarting:boolean = true;
@@ -197,6 +198,7 @@ export class AppComponent implements OnInit {
         this.DOMConfig.banner = pageSlug != "index" && !this.currentDocument.no_banner
         this.DOMConfig.subBanner = this.currentDocument.sub_title;
         this.DOMConfig.bannerLink = this.currentDocument.banner_link;
+        this.DOMConfig.breadcrumbs = this.currentDocument.breadcrumbs || [];
 
         this.hostClasses = [
             `page-${pageSlug}`,
