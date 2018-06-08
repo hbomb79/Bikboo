@@ -116,11 +116,6 @@ export class AppComponent implements OnInit {
                 //TODO: Handle hash scroll.
             } else {
                 this.currentUrl = url;
-
-                clearTimeout( this.progressBarTimeout )
-                this.progressBarTimeout = setTimeout( () => {
-                    this.isFetching = true;
-                }, 300 )
             }
         });
 
@@ -129,6 +124,7 @@ export class AppComponent implements OnInit {
             switch( event.type ) {
                 case HttpEventType.Sent:
                     this.logger.log("Request sent")
+                    this.isFetching = true
                     this.fetchProgress = 0.2;
 
                     break;
