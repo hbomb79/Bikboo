@@ -7,6 +7,10 @@
 
         opacity: 1
 
+    &.sidebar-collapsed
+        .main .content #sidebar
+            width: 50px
+
 .main .content #sidebar
     position: fixed
     top: 0
@@ -25,9 +29,9 @@
 
     opacity: 0
 
-    -webkit-transition: transform 150ms ease, opacity 150ms ease
-    -o-transition: transform 150ms ease, opacity 150ms ease
-    transition: transform 150ms ease, opacity 150ms ease
+    -webkit-transition: transform 150ms ease, opacity 150ms ease, width 150ms ease
+    -o-transition: transform 150ms ease, opacity 150ms ease, width 150ms ease
+    transition: transform 150ms ease, opacity 150ms ease, width 150ms ease
 
     box-shadow: 0px 0px 4px #6b6b6b
 
@@ -65,6 +69,8 @@
                     -o-transition: padding 100ms ease, color 100ms ease, border-left 100ms ease
                     transition: padding 100ms ease, color 100ms ease, border-left 100ms ease
 
+                    cursor: pointer
+
                     border-left: solid 0px #212121
 
                     &:hover:not(.active)
@@ -77,6 +83,10 @@
                         &:hover
                             border-left-width: 8px
 
-                // li#bottom a
-                //     position: fixed
-                //     bottom: 0
+                li#bottom a
+                    position: fixed
+                    bottom: 0
+                    width: 100%
+
+                    border-top: solid 1px #2d2d2d
+                    border-bottom: none
