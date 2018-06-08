@@ -98,8 +98,8 @@ export class DocumentViewerComponent implements DoCheck, OnDestroy {
         // swap views later (see this.rotateViews).
         this.hostElement = elementRef.nativeElement;
 
-        $( this.currentView ).addClass("dynamic");
-        $( this.pendingView ).addClass("dynamic");
+        $( this.currentView ).addClass("dynamic-nav-padding document");
+        $( this.pendingView ).addClass("dynamic-nav-padding document");
 
         this.docContents$
             .switchMap( doc => this.loadNextView( doc ) )
