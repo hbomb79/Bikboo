@@ -7,7 +7,6 @@ nav
     width: 100%
 
     #primary-banner
-        background: inherit
         padding: 0.5rem 0
 
         .min-container#navigation
@@ -48,15 +47,22 @@ nav
                     float: right
 
                 &#profile
+                    padding: 7px 0
+                    height: $nav-height
+
+                    -webkit-transition: transform 100ms ease
+                    -o-transition: transform 100ms ease
+                    transition: transform 100ms ease
+
                     img
                         display: inline-block
-                        height: $nav-height
-                        padding: 7px 0px
                         border-radius: 100%
                         float: left
+                        height: 100%
+                        border: 1px solid #585858
 
-                    &:hover span
-                        color: #004565
+                    &:hover
+                        transform: scale(0.95)
 
             @import 'partials/profile_modal'
 
