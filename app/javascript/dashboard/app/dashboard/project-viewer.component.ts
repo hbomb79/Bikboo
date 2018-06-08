@@ -9,10 +9,11 @@ import 'rxjs/add/observable/interval';
 
 import { trigger, style, animate, transition, query, stagger } from '@angular/animations';
 
-import { ProjectMetadata } from '../interfaces';
+import { ProjectMetadata, SidebarStatus } from '../interfaces';
 
 import { LoggerService } from '../services/logger.service';
 import { ProjectService } from '../services/project.service';
+import { SidebarService } from '../services/sidebar.service';
 
 @Component({
     selector: 'app-project-viewer',
@@ -111,6 +112,9 @@ export class ProjectViewerComponent implements OnInit {
 
     fetchError:Error;
 
+    protected sidebarActive:boolean = false;
+    protected sidebarCollapsed:boolean = false;
+
     protected onDestroy$ = new EventEmitter<void>();
     protected void$ = of<void>(undefined);
 
@@ -121,17 +125,26 @@ export class ProjectViewerComponent implements OnInit {
     constructor(
         private el: ElementRef,
         private logger: LoggerService,
-        private projectService: ProjectService
+        private projectService: ProjectService,
+        private sidebarService: SidebarService
     ) {
         // Embedded component service doesn't apply property bindings so
         // the projectID must be fetched manually from the element.
         this.projectID = el.nativeElement.attributes.project.value;
+        this.sidebarService.status.subscribe( ( status:SidebarStatus ) => {
+            this.sidebarActive = status.active;
+            this.sidebarCollapsed = status.collapsed;
+        } );
     }
 
     ngOnInit() {
         this.isFetching = true
         this.queryProjectInfo(() => {
             this.isFetching = false;
+            setTimeout( () => {
+                this.sidebarService.active = true;
+                this.sidebarService.collapsed = false;
+            }, 50 );
 
             Observable
                 .interval(60000)
@@ -142,6 +155,7 @@ export class ProjectViewerComponent implements OnInit {
     }
 
     ngOnDestroy() {
+        this.sidebarService.active = false;
         this.onDestroy$.emit();
     }
 
