@@ -1,94 +1,99 @@
 @import 'core'
 
-body
-    /**/
-    > div.loading
-        @extend .abs-center
-        text-align: center
+html
+    overflow: hidden
 
-        h1
-            color: grey
-            font-weight: 100
-            font-style: italic
-            font-size: 2rem
-            margin-top: 0
+    body
+        overflow: auto
+        height: 100vh
 
-        svg
-            width: 150px
-            height: 150px
+        > div.loading
+            @extend .abs-center
+            text-align: center
 
-            circle
-                stroke: $lightb-accent
+            h1
+                color: grey
+                font-weight: 100
+                font-style: italic
+                font-size: 2rem
+                margin-top: 0
 
-    bikboo-shell
-        @import 'partials/navigation'
+            svg
+                width: 150px
+                height: 150px
 
-        app-document-viewer, app-project-list, app-project-tile, app-project-viewer
+                circle
+                    stroke: $lightb-accent
+
+        bikboo-shell
+            @import 'partials/navigation'
+
+            app-document-viewer, app-project-list, app-project-tile, app-project-viewer
+                display: block
+
             display: block
+            opacity: 0
 
-        display: block
-        opacity: 0
+            background-color: white
 
-        background-color: white
+            -webkit-transform: scale(0.97)
+            -ms-transform: scale(0.97)
+            -o-transform: scale(0.97)
+            transform: scale(0.97)
 
-        -webkit-transform: scale(0.97)
-        -ms-transform: scale(0.97)
-        -o-transform: scale(0.97)
-        transform: scale(0.97)
+            -webkit-transition: opacity 200ms ease, transform 200ms ease
+            -o-transition: opacity 200ms ease, transform 200ms ease
+            transition: opacity 200ms ease, transform 200ms ease
 
-        -webkit-transition: opacity 200ms ease, transform 200ms ease
-        -o-transition: opacity 200ms ease, transform 200ms ease
-        transition: opacity 200ms ease, transform 200ms ease
+            .fetch-progress
+                height: 2px
+                background: linear-gradient(to right, #0f9df1 0%, #7b37ff 100%)
+                position: absolute
+                z-index: 101
 
-        .fetch-progress
-            height: 2px
-            background: linear-gradient(to right, #0f9df1 0%, #7b37ff 100%)
-            position: absolute
-            z-index: 101
+                -webkit-transition: width 200ms ease-out
+                -o-transition: width 200ms ease-out
+                transition: width 200ms ease-out
 
-            -webkit-transition: width 200ms ease-out
-            -o-transition: width 200ms ease-out
-            transition: width 200ms ease-out
+            &.ready
+                opacity: 1
 
-        &.ready
-            opacity: 1
+                -webkit-transform: scale(1)
+                -ms-transform: scale(1)
+                -o-transform: scale(1)
+                transform: scale(1)
 
-            -webkit-transform: scale(1)
-            -ms-transform: scale(1)
-            -o-transform: scale(1)
-            transform: scale(1)
-
-        app-document-viewer
-            height: 100vh
-            position: relative
-
-            > div.document
-                opacity: 0
-                -webkit-transform: scale( 0.95 )
-                -ms-transform: scale( 0.95 )
-                -o-transform: scale( 0.95 )
-                transform: scale( 0.95 )
-
-                -webkit-transition: opacity 200ms ease, transform 200ms ease, padding-left 200ms ease
-                -o-transition: opacity 200ms ease, transform 200ms ease, padding-left 200ms ease
-                transition: opacity 200ms ease, transform 200ms ease, padding-left 200ms ease
-
-                position: relative
+            app-document-viewer
                 height: 100%
+                position: relative
 
-                main.min-container
-                    height: 100%
+                > div.document
+                    opacity: 0
+                    -webkit-transform: scale( 0.95 )
+                    -ms-transform: scale( 0.95 )
+                    -o-transform: scale( 0.95 )
+                    transform: scale( 0.95 )
+
+                    -webkit-transition: opacity 200ms ease, transform 200ms ease, padding-left 200ms ease
+                    -o-transition: opacity 200ms ease, transform 200ms ease, padding-left 200ms ease
+                    transition: opacity 200ms ease, transform 200ms ease, padding-left 200ms ease
+
                     position: relative
+                    height: 100%
 
-                &.active
-                    opacity: 1
-                    -webkit-transform: scale( 1 )
-                    -ms-transform: scale( 1 )
-                    -o-transform: scale( 1 )
-                    transform: scale( 1 )
+                    main.min-container
+                        height: 100%
+                        position: relative
 
-                @import 'partials/error'
+                    &.active
+                        opacity: 1
+                        -webkit-transform: scale( 1 )
+                        -ms-transform: scale( 1 )
+                        -o-transform: scale( 1 )
+                        transform: scale( 1 )
+
+                    @import 'partials/error'
 
 
-    @import 'partials/splash'
-    @import 'partials/dashboard/core'
+        @import 'partials/splash'
+        @import 'partials/dashboard/core'
