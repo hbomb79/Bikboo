@@ -16,8 +16,6 @@ import { ProjectService } from '../services/project.service';
 import { SidebarService } from '../services/sidebar.service';
 import { LocationService } from '../services/location.service';
 
-import $ from 'jquery';
-
 const DEFAULT_PAGE:string = "overview";
 
 @Component({
@@ -113,6 +111,8 @@ export class ProjectViewerComponent implements OnInit {
     projectID:string = '';
     questionMarkSrc = require("images/question-mark.png");
 
+    private baseUrl:string;
+
     protected projectMetadata:ProjectMetadata;
     protected isFetching:boolean = false;
     protected fetchError:Error;
@@ -156,8 +156,14 @@ export class ProjectViewerComponent implements OnInit {
             this.sidebarCollapsed = status.collapsed;
         } );
 
+        this.baseUrl = window.location.pathname;
+
         this.locationService.currentUrl
-            .do( url => this.currentPage = ( /^#?!/.test( window.location.hash ) ) ? window.location.hash.substr( 2 ) : DEFAULT_PAGE )
+            .do( url => {
+                if( window.location.pathname != this.baseUrl ) return;
+
+                this.currentPage = ( /^#?!/.test( window.location.hash ) ) ? window.location.hash.substr( 2 ) : DEFAULT_PAGE;
+            } )
             .takeUntil( this.onDestroy$ )
             .subscribe();
     }
