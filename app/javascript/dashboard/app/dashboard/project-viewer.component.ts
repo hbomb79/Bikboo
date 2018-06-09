@@ -14,6 +14,11 @@ import { ProjectMetadata, SidebarStatus } from '../interfaces';
 import { LoggerService } from '../services/logger.service';
 import { ProjectService } from '../services/project.service';
 import { SidebarService } from '../services/sidebar.service';
+import { LocationService } from '../services/location.service';
+
+import $ from 'jquery';
+
+const DEFAULT_PAGE:string = "overview";
 
 @Component({
     selector: 'app-project-viewer',
@@ -56,10 +61,10 @@ import { SidebarService } from '../services/sidebar.service';
                         </div>
                         <div class="options">
                             <ul id="top-level">
-                                <li><a>Overview</a></li>
-                                <li><a>Slide Editor</a></li>
-                                <li><a>Help</a></li>
-                                <li><a>Settings</a></li>
+                                <li><a href="#!overview" [class.active]="currentPage == 'overview'">Overview</a></li>
+                                <li><a href="#!slides" [class.active]="currentPage == 'slides'">Slide Editor</a></li>
+                                <li><a href="#!help" [class.active]="currentPage == 'help'">Help</a></li>
+                                <li><a href="#!settings" [class.active]="currentPage == 'settings'">Settings</a></li>
 
                                 <li id="bottom">
                                     <a (click)="toggleSidebar()">{{sidebarCollapsed && '' || 'Collapse'}}</a>
@@ -69,6 +74,7 @@ import { SidebarService } from '../services/sidebar.service';
                     </div>
                 </div>
                 <div id="dynamic-container" [ngSwitch]="projectMetadata.slides.length">
+                    <h2 id="section-title">{{currentPage}}</h2>
                     <div id="slide-notice" class="empty-notice" *ngSwitchCase="0">
                         <div class="wrapper clearfix">
                             <div id="left">
@@ -105,18 +111,31 @@ import { SidebarService } from '../services/sidebar.service';
 })
 export class ProjectViewerComponent implements OnInit {
     projectID:string = '';
-    projectMetadata:ProjectMetadata;
-
-    isFetching:boolean = false;
     questionMarkSrc = require("images/question-mark.png");
 
-    fetchError:Error;
+    protected projectMetadata:ProjectMetadata;
+    protected isFetching:boolean = false;
+    protected fetchError:Error;
 
     protected sidebarActive:boolean = false;
     protected sidebarCollapsed:boolean = false;
 
     protected onDestroy$ = new EventEmitter<void>();
-    protected void$ = of<void>(undefined);
+
+    protected validPages:string[] = [ "overview", "slides", "help", "settings" ];
+    protected _currentPage:string = DEFAULT_PAGE;
+    set currentPage( page:string ) {
+        if( page == this._currentPage )
+            return;
+        else if( this.validPages.indexOf( page ) > -1 )
+            this._currentPage = page;
+        else
+            window.location.hash = `#!${DEFAULT_PAGE}`;
+    }
+
+    get currentPage() : string {
+        return this._currentPage;
+    }
 
     get sectionTitle() : string {
         return this.isFetching ? "Fetching Project" : "Project Breakdown"
@@ -126,7 +145,8 @@ export class ProjectViewerComponent implements OnInit {
         private el: ElementRef,
         private logger: LoggerService,
         private projectService: ProjectService,
-        private sidebarService: SidebarService
+        private sidebarService: SidebarService,
+        private locationService: LocationService
     ) {
         // Embedded component service doesn't apply property bindings so
         // the projectID must be fetched manually from the element.
@@ -135,6 +155,11 @@ export class ProjectViewerComponent implements OnInit {
             this.sidebarActive = status.active;
             this.sidebarCollapsed = status.collapsed;
         } );
+
+        this.locationService.currentUrl
+            .do( url => this.currentPage = ( /^#?!/.test( window.location.hash ) ) ? window.location.hash.substr( 2 ) : DEFAULT_PAGE )
+            .takeUntil( this.onDestroy$ )
+            .subscribe();
     }
 
     ngOnInit() {
@@ -164,8 +189,7 @@ export class ProjectViewerComponent implements OnInit {
     }
 
     protected queryProjectInfo(successCb = () => {}) {
-        return this.void$
-            .switchMap(() => this.projectService.getProjectInformation( this.projectID ) )
+        return this.projectService.getProjectInformation( this.projectID )
             .do(meta => this.projectMetadata = meta)
             .do(() => console.log( this.projectMetadata ))
             .catch(err => {
