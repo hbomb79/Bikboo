@@ -99,6 +99,7 @@ export class AppComponent implements OnInit {
 
     currentUrl:string;
     currentDocument:DocumentContents;
+    protected newUrl:string|boolean;
 
     private resizeTimeout:any;
 
@@ -115,15 +116,9 @@ export class AppComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.locationService.currentUrl.subscribe(url => {
-            if( url == this.currentUrl ) {
-                // As the URL has changed, but the normalised URL is the same,
-                // we'll assume that only the hash component has changed.
-                //TODO: Handle hash scroll.
-            } else {
-                this.currentUrl = url;
-            }
-        });
+        this.documentService.onUrlUpdate$.subscribe( url => {
+            this.newUrl = window.location.pathname;
+        } );
 
         this.sidebarService.status.subscribe( ( status:SidebarStatus ) => {
             this.DOMConfig.sidebarActive = status.active;
@@ -180,6 +175,11 @@ export class AppComponent implements OnInit {
 
     // Callback used to track the 'docInserted' event on the DocumentViewerComponent
     onDocumentInserted() {
+        if( this.newUrl ) {
+            this.currentUrl = <string>this.newUrl;
+            this.newUrl = false;
+        }
+
         this.updateHost();
     }
 
@@ -205,7 +205,7 @@ export class AppComponent implements OnInit {
     // values off of the values found in the embedded document.
     updateHost() {
         setTimeout( () => {
-            const urlWithoutSearch = this.currentUrl.match(/[^?]*/)[0];
+            const urlWithoutSearch = (this.currentUrl || '').match(/[^?]*/)[0];
             const pageSlug = urlWithoutSearch ? /^\/*(.+?)\/*$/g.exec( urlWithoutSearch )[1].replace(/\//g, '-') : 'index';
 
             this.DOMConfig.banner = pageSlug != "index" && !this.currentDocument.no_banner

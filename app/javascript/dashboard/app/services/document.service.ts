@@ -32,10 +32,10 @@ const ERROR_CONTENT_MAP = {
 @Injectable()
 export class DocumentService {
     currentDocument: Observable<HttpEvent<any>>;
-    private lastUrl:string;
+    lastUrl:string;
     private currentUser:UserInformation;
 
-    protected onUrlUpdate$ = new ReplaySubject<string>(1);
+    onUrlUpdate$ = new ReplaySubject<string>(1);
 
     constructor(
         private locationService: LocationService,
@@ -51,14 +51,7 @@ export class DocumentService {
         });
 
         this.locationService.currentUrl
-            .switchMap( url => of( url.replace( /#.*$/, "" ) ) )
-            .switchMap( url => {
-                const splitRegex = /^([^?]*)(\?[^?]+)$/
-                if( url.match( splitRegex ) )
-                    return of( url.replace( splitRegex, ( input, pre, post ) => ( pre || '/index' ) + ".json" + post ) )
-
-                return of( ( url || "/index" ) + ".json" );
-            } )
+            .switchMap( url => of( this.formatUrl( url ) ) )
             .do( url => {
                 if( url != this.lastUrl )
                     this.onUrlUpdate$.next( url )
@@ -71,6 +64,16 @@ export class DocumentService {
             throw Error('Unable to reload document @ DocumentService; there is no URL on record to reload, wait until after initial load before attempting to reload');
 
         this.onUrlUpdate$.next( this.lastUrl );
+    }
+
+    formatUrl( url:string ) : string {
+        url = url.replace( /#.*$/, "" );
+
+        const splitRegex = /^([^?]*)(\?[^?]+)$/
+        if( url.match( splitRegex ) )
+            url = url.replace( splitRegex, ( input, pre, post ) => ( pre || '/index' ) + ".json" + post );
+
+        return ( url || "/index" ) + ".json";
     }
 
     private fetchDocumentContents(url: string): Observable<HttpEvent<any>> {
