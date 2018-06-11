@@ -1,7 +1,7 @@
 <div class="fetch-progress" [ngStyle]="{'width': ( fetchProgress * 100 ) + '%'}" *ngIf="isFetching" [@progressFade]></div>
 
 <nav *ngIf="!isStarting && DOMConfig.banner" [@navState]>
-    <div id="primary-banner">
+    <div id="primary-banner" [class.drop-shadow]="!DOMConfig.subBanner">
         <div class="min-container" id="navigation">
             <a class="title" href="/dashboard">Bikboo</a>
             <a class="link" href="/">About</a>
@@ -9,7 +9,6 @@
 
             <a id="profile" class="right no-follow" *ngIf="loggedInUser" (click)="toggleProfileModal()" #profileToggle>
                 <img src="{{loggedInUser.image_url}}?size=40">
-                <!-- <span>&#x25BC;</span> -->
             </a>
 
             <app-profile-modal *ngIf="loggedInUser" [user]="loggedInUser"></app-profile-modal>
