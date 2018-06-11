@@ -16,6 +16,7 @@ import { SocketService } from './socket.service';
 @Injectable()
 export class UserService {
     currentUser = new EventEmitter<UserInformation>();
+    user:UserInformation;
     private socket;
     private signingOut:boolean;
 
@@ -63,6 +64,7 @@ export class UserService {
                     this.currentUser.next( data.user );
                     cb(data.user);
                     this.determineSocket( data.user );
+                    this.user = data.user;
                 },
                 (error) => {
                     throw Error( `Unable to fetch authentication details, error: ${error.message}` );

@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { switchMap } from 'rxjs/operators';
 
-import { ProjectMetadataList, ProjectMetadata } from '../interfaces';
+import { ProjectMetadataList, ProjectData } from '../interfaces';
 
 import { LoggerService } from './logger.service';
 
@@ -22,7 +22,7 @@ export class ProjectService {
         return this.http.get<ProjectMetadataList>(`${PROJECT_BASE_URL}/metadata.json`, { responseType: 'json' });
     }
 
-    getProjectInformation( projectID: string ) : Observable<ProjectMetadata> {
-        return this.http.get<ProjectMetadata>(`${PROJECT_BASE_URL}/${projectID}.json`, { responseType: 'json' });
+    getProjectInformation( projectID: string ) : Observable<ProjectData> {
+        return this.http.get<ProjectData>(`${PROJECT_BASE_URL}/${projectID}.json`, { responseType: 'json' });
     }
 }
