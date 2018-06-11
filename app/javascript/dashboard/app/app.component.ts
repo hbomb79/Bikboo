@@ -205,7 +205,7 @@ export class AppComponent implements OnInit {
     // values off of the values found in the embedded document.
     updateHost() {
         setTimeout( () => {
-            const urlWithoutSearch = (this.currentUrl || '').match(/\/?[^?]*/)[0].replace(/\/*$/, "");
+            const urlWithoutSearch = (this.currentUrl || '').match(/[^?]*/)[0].replace(/\/*$/, "");
             const pageSlug = urlWithoutSearch ? /^\/*(.+?)\/*$/g.exec( urlWithoutSearch )[1].replace(/\//g, '-') : 'index';
 
             this.DOMConfig.banner = pageSlug != "index" && !this.currentDocument.no_banner
