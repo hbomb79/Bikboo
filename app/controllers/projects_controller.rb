@@ -94,17 +94,14 @@ class ProjectsController < ApplicationController
         project = Project.find params[:id]
 
         if( ( project && project.user_id ) == current_user.id ) then
-            render :json => {
-                :project => project.as_json,
-                :slides => project.project_slides.as_json
-            }
+            #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
+            # in the 'statusInfo' key.
+            render :json => project.as_json.merge({:slides => project.project_slides, :statusInfo => ""})
         else
             render :json => {
                 :message => "Unable to retrieve project information; user not authorized"
             }, status: :unauthorized
         end
-
-        #TODO: When status is implemented, add information about the new status (ie: If request declined, add reason to response)
     end
 
 private
