@@ -16,6 +16,10 @@ import { ProjectTileComponent } from './dashboard/project-tile.component.ts';
 import { ProjectViewerComponent } from './dashboard/project-viewer.component.ts';
 import { ProjectCreateComponent } from './dashboard/project-create.component.ts';
 
+import { ProjectOverviewComponent } from './dashboard/editor/project-overview.component.ts'
+import { ProjectSettingsComponent } from './dashboard/editor/project-settings.component.ts'
+import { ProjectSlideEditorComponent } from './dashboard/editor/project-slide-editor.component.ts'
+
 /* Services */
 import { Location, LocationStrategy, PathLocationStrategy, APP_BASE_HREF } from '@angular/common';
 
@@ -44,7 +48,11 @@ if( process.env.NODE_ENV == 'production' )
         ProjectListComponent,
         ProjectTileComponent,
         ProjectViewerComponent,
-        ProjectCreateComponent
+        ProjectCreateComponent,
+
+        ProjectOverviewComponent,
+        ProjectSettingsComponent,
+        ProjectSlideEditorComponent
     ],
     imports: [
         BrowserModule,
