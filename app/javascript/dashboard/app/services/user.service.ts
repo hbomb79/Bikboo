@@ -38,6 +38,14 @@ export class UserService {
         // telling the client that the user has signed out in another tab.
         // This isn't correct however, we want to supress this message while signing out
         // and instead tell the user their signout was successful.
+
+        //TODO: If the websocket is broken (can happen if the users cookie is incorrect, or
+        // a server connection issue), signing out completely stops working (or, more accurately,
+        // the user is signed out but receives no feedback and simply sits on the same page).
+        // This is because the user is only considered 'signed out' by the client when the websocket
+        // receives a 'destroy_session' ping. To fix this, we should move the signout logic here
+        // and simply tell the websocket to ignore incoming pings (don't display duplicate signed out
+        // notifications).
         this.signingOut = true;
         this.http.get<any>('/signout.json', { responseType: 'json' } )
             .subscribe({
