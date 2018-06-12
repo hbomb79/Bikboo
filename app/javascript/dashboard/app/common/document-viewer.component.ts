@@ -16,8 +16,6 @@ import 'rxjs/add/operator/delay';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/takeUntil';
 
-import $ from 'jquery';
-
 import { DocumentContents } from '../interfaces';
 
 // This constant must be true for animations to occur between
@@ -98,8 +96,8 @@ export class DocumentViewerComponent implements DoCheck, OnDestroy {
         // swap views later (see this.rotateViews).
         this.hostElement = elementRef.nativeElement;
 
-        $( this.currentView ).addClass("dynamic-nav-padding document");
-        $( this.pendingView ).addClass("dynamic-nav-padding document");
+        this.currentView.classList.add('dynamic-nav-padding', 'document');
+        this.pendingView.classList.add('dynamic-nav-padding', 'document');
 
         this.docContents$
             .switchMap( doc => this.loadNextView( doc ) )
@@ -132,9 +130,7 @@ export class DocumentViewerComponent implements DoCheck, OnDestroy {
         const animationsEnabled = ANIMATIONS && !this.hostElement.classList.contains( ANIMATION_EXCLUDE )
         function runAnimation(target:HTMLElement, animatingIn:boolean, duration:number = 200) {
             return of(target)
-                .do(() => {
-                    $( target )[ animatingIn ? "addClass" : "removeClass" ]( "active" )
-                })
+                .do( elem => elem.classList[ animatingIn ? 'add' : 'remove' ]( 'active' ) )
                 .delay(duration);
         }
 
