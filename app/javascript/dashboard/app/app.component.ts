@@ -71,6 +71,13 @@ export class AppComponent implements OnInit {
         sidebarCollapsed: false as boolean
     };
 
+    // questionMarkSrc = require("images/question-mark.png");
+    overviewImageSrc = require("images/house-outline.svg");
+    editorImageSrc = require("images/editor.svg");
+    helpImageSrc = require("images/help.svg");
+    settingsImageSrc = require("images/settings.svg");
+    arrowImageSrc = require("images/left-arrow.svg");
+
     isStarting:boolean = true;
 
     // When 'true', a progress bar representing the progress of document fetch
@@ -279,8 +286,10 @@ export class AppComponent implements OnInit {
     onResize() {
         clearTimeout( this.resizeTimeout );
         this.resizeTimeout = setTimeout( () => {
-            const activeDiv = $( this.docViewer.hostElement ).find("div.dynamic-nav-padding");
-            activeDiv.css("padding-top", this.DOMConfig.banner && $(`nav ${!this.DOMConfig.subBanner ? '#primary-banner' : ''}`).outerHeight() || 0);
+            const navHeight = this.DOMConfig.banner && $(`nav ${!this.DOMConfig.subBanner ? '#primary-banner' : ''}`).outerHeight() || 0;
+
+            $( document ).find(".dynamic-nav-padding").css("padding-top", navHeight);
+            $( document ).find(".dynamic-nav-margin").css("margin-top", navHeight);
         }, 50 );
     }
 
