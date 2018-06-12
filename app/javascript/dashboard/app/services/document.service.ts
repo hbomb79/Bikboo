@@ -71,7 +71,7 @@ export class DocumentService {
 
         const splitRegex = /^([^?]*)(\?[^?]+)$/
         if( url.match( splitRegex ) )
-            url = url.replace( splitRegex, ( input, pre, post ) => ( pre || '/index' ) + ".json" + post );
+            return url.replace( splitRegex, ( input, pre, post ) => ( pre || '/index' ) + ".json" + post );
 
         return ( url || "/index" ) + ".json";
     }
