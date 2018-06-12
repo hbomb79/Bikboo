@@ -42,7 +42,6 @@ export class ProjectCreateComponent implements AfterViewInit {
     constructor(private logger: LoggerService, private locationService: LocationService) { }
 
     ngAfterViewInit() {
-        console.log( $(this.formElement) );
         $( this.formElement.nativeElement ).on("ajax:error", (event:any) => {
             (window as any).detail = event;
 
@@ -50,8 +49,7 @@ export class ProjectCreateComponent implements AfterViewInit {
                 this.creationError( event.detail );
             } else {
                 (window as any).notices.queue("We couldn't create a project for you because something's wrong on our end. Rest assured that we're working on a fix as fast as we can!", true);
-                console.error("[FATAL] Uncaught exception: Unable to create a project due to unidentifiable error (no JSON response from server REST endpoint). Dump follows");
-                console.log( event );
+                this.logger.dump( "error", "Uncaught exception: Unable to create a project due to unidentifiable error (invalid JSON response from server REST endpoint).", event );
             }
         }).on("ajax:success", (event:any) => {
             this.creationSuccess( event.detail );

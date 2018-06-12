@@ -15,10 +15,20 @@ export class LoggerService {
     }
 
     warn( value: any, ...rest: any[] ) {
-        console.warn( value, ...rest );
+        console.warn( `[WARN] ${value}`, ...rest );
     }
 
     error( value: any, ...rest: any[] ) {
-        console.error( value, ...rest );
+        console.error( `[EXCEPTION] ${value}`, ...rest );
+    }
+
+    dump( method: string, message: string, dump: any ) {
+        if( typeof( this[method] ) == "function" ) {
+            this[method]( message );
+        } else {
+            this.error( message );
+        }
+
+        this.debug("Dump object for above error follows:", dump);
     }
 }
