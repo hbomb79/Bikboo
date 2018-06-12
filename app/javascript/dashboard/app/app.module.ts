@@ -8,7 +8,6 @@ import { InlineSVGModule } from 'ng-inline-svg';
 /* Components */
 import { AppComponent } from './app.component';
 import { DocumentViewerComponent } from './common/document-viewer.component.ts';
-import { NavigationComponent } from './common/navigation.component.ts';
 import { ProfileModalComponent } from './common/profile-modal.component.ts';
 
 import { ProjectListComponent } from './dashboard/project-list.component.ts';
@@ -42,7 +41,6 @@ if( process.env.NODE_ENV == 'production' )
     declarations: [
         AppComponent,
         DocumentViewerComponent,
-        NavigationComponent,
         ProfileModalComponent,
 
         ProjectListComponent,
