@@ -35,21 +35,22 @@ export class UserService {
     }
 
     signOut() {
-        // When signing out, the server will transmit a 'destroy_session' ping,
-        // telling the client that the user has signed out in another tab.
-        // This isn't correct however, we want to supress this message while signing out
-        // and instead tell the user their signout was successful.
-
-        //TODO: If the websocket is broken (can happen if the users cookie is incorrect, or
-        // a server connection issue), signing out completely stops working (or, more accurately,
-        // the user is signed out but receives no feedback and simply sits on the same page).
-        // This is because the user is only considered 'signed out' by the client when the websocket
-        // receives a 'destroy_session' ping. To fix this, we should move the signout logic here
-        // and simply tell the websocket to ignore incoming pings (don't display duplicate signed out
-        // notifications).
         this.signingOut = true;
         this.http.get<any>('/signout.json', { responseType: 'json' } )
             .subscribe({
+                next: (data) => {
+                    this.getAuthenticationDetails( (userData) => {
+                        if( userData ) {
+                            this.logger.error("De-authentication flow has FAILED. Server still reports signed in user. Sending user to root via reload.");
+                            return this.locationService.replace("/");
+                        }
+
+                        this.logger.debug("User signed out successfully. Resetting flow indicator to 'false'");
+                        (window as any).notices.queue("Signed out!");
+                        this.locationService.go("/");
+                        this.signingOut = false;
+                    } );
+                },
                 error: (error) => {
                     this.logger.dump("error", "Failure while trying to sign out current user. Not able to continue de-auth process.", error);
                 }
@@ -81,53 +82,50 @@ export class UserService {
     protected establishSocketConnection() {
         if( this.socket ) return
 
+        this.logger.debug("Attempting to open socket connection");
         this.socket = this.socketService.actionCable.subscriptions.create( "UserChannel", {
             received: (data) => {
-                setTimeout( () => {
-                    switch( data.action ) {
-                        case 'destroy_session': {
-                            return this.getAuthenticationDetails((user) => {
-                                if( !user ) {
-                                    if( this.signingOut ) {
-                                        (window as any).notices.queue("Signed out!");
-                                        this.signingOut = false;
-                                        this.locationService.go("/");
-                                    } else {
-                                        (window as any).notices.queue("Signed out in another tab!");
-                                    }
-                                }
-                            });
-                        }
-                        case 'revoke_auth_token': {
-                            return this.getAuthenticationDetails((user) => {
-                                if( !user ) {
-                                    if( this.signingOut ){
-                                        (window as any).notices.queue("Signed out of all devices");
-                                        this.signingOut = false;
-                                        this.locationService.go("/");
-                                    } else {
-                                        (window as any).notices.queue("Account authentication token has been revoked. Please sign in again to issue a new token.", true);
-                                    }
-                                }
-                            })
-                        }
+                this.logger.debug("Socket ping:", data);
+                if( this.signingOut ) {
+                    this.logger.debug("Incoming web-socket ping is being ignored because the deauthentication flow is running");
+                    return;
+                }
+
+                switch( data.action ) {
+                    case 'destroy_session': {
+                        return this.getAuthenticationDetails((user) => {
+                            if( !user )
+                                (window as any).notices.queue("Signed out in another tab!");
+                        });
                     }
-                }, 250 );
+                    case 'revoke_auth_token': {
+                        return this.getAuthenticationDetails((user) => {
+                            if( !user )
+                                (window as any).notices.queue("Account authentication token has been revoked. Please sign in again to issue a new token.", true);
+                        })
+                    }
+                }
             },
             disconnected: ({willAttemptReconnect}) => {
                 if( !willAttemptReconnect )
                     this.destroySocketConnection();
             }
         });
+
+        (window as any).socket = this.socket;
+        (window as any).service = this.socketService;
     }
 
     protected destroySocketConnection( uninstall = false ) {
         if( this.socket ) {
+            this.logger.debug("Unsubscribing from socket");
             this.socket.unsubscribe()
             this.socket = undefined;
         }
 
-        if( uninstall )
+        if( uninstall ) {
+            this.logger.debug("Uninstalling action cable");
             this.socketService.disconnectCable();
+        }
     }
 }
