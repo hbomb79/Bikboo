@@ -39,7 +39,7 @@ private
     end
 
     def current_user
-        @user ||= User.find session[:user_id] if session[:user_id]
+        @user ||= User.find_by_id_and_auth_token( session[:user_id], session[:auth_token] ) if session[:user_id] and session[:auth_token]
     end
 
     ##
@@ -50,7 +50,7 @@ private
         user_id = session[:user_id]
         auth_token = session[:auth_token]
 
-        if user_id and auth_token
+        if user_id and auth_token and ( user_id == cookies.encrypted[:user_id] and auth_token == cookies.encrypted[:auth_token] )
             # Use find_by_id to avoid ActiveRecord::RecordNotFound exception
             user = User.find_by_id user_id
 
