@@ -131,7 +131,7 @@ export class AppComponent implements OnInit {
             this.DOMConfig.sidebarActive = status.active;
             this.DOMConfig.sidebarCollapsed = status.collapsed;
 
-            this.updateHost();
+            this.updateHost( true );
         } );
 
         this.documentService.currentDocument.subscribe( ( event:HttpEvent<any> ) => {
@@ -209,15 +209,17 @@ export class AppComponent implements OnInit {
 
     // Update the classes present on the host element, basing the new
     // values off of the values found in the embedded document.
-    updateHost() {
+    updateHost( skipDomConfig?:boolean ) {
         setTimeout( () => {
             const urlWithoutSearch = (this.currentUrl || '').match(/[^?]*/)[0].replace(/\/*$/, "");
             const pageSlug = urlWithoutSearch ? /^\/*(.+?)\/*$/g.exec( urlWithoutSearch )[1].replace(/\//g, '-') : 'index';
 
-            this.DOMConfig.banner = !this.currentDocument.no_banner
-            this.DOMConfig.subBanner = this.currentDocument.sub_title;
-            this.DOMConfig.bannerLink = this.currentDocument.banner_link;
-            this.DOMConfig.breadcrumbs = this.currentDocument.breadcrumbs || [];
+            if( !skipDomConfig ) {
+                this.DOMConfig.banner = !this.currentDocument.no_banner
+                this.DOMConfig.subBanner = this.currentDocument.sub_title;
+                this.DOMConfig.bannerLink = this.currentDocument.banner_link;
+                this.DOMConfig.breadcrumbs = this.currentDocument.breadcrumbs || [];
+            }
 
             this.hostClasses = [
                 `page-${pageSlug}`,
