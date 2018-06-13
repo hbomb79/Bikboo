@@ -217,7 +217,7 @@ export class AppComponent implements OnInit {
                 this.isSwapping ? 'swapping' : 'idle'
             ].join(' ')
 
-            this.onResize();
+            // this.onResize();
         }, 0 );
     }
 
@@ -271,16 +271,16 @@ export class AppComponent implements OnInit {
         }
     }
 
-    @HostListener('window:resize')
-    onResize() {
-        clearTimeout( this.resizeTimeout );
-        this.resizeTimeout = setTimeout( () => {
-            const navHeight = this.DOMConfig.banner && $(`nav ${!this.DOMConfig.subBanner ? '#primary-banner' : ''}`).outerHeight() || 0;
+    // @HostListener('window:resize')
+    // onResize() {
+    //     clearTimeout( this.resizeTimeout );
+    //     this.resizeTimeout = setTimeout( () => {
+    //         const navHeight = this.DOMConfig.banner && $(`nav ${!this.DOMConfig.subBanner ? '#primary-banner' : ''}`).outerHeight() || 0;
 
-            $( document ).find(".dynamic-nav-padding").css("padding-top", navHeight);
-            $( document ).find(".dynamic-nav-margin").css("margin-top", navHeight);
-        }, 50 );
-    }
+    //         $( document ).find(".dynamic-nav-padding").css("padding-top", navHeight);
+    //         $( document ).find(".dynamic-nav-margin").css("margin-top", navHeight);
+    //     }, 50 );
+    // }
 
     get homePath() : string {
         return window.location.pathname.match(/^\/dashboard.*$/) ? "/dashboard" : "/";
