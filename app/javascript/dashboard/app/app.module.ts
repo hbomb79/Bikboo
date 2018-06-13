@@ -28,7 +28,6 @@ import { UserService } from './services/user.service';
 import { LocationService } from './services/location.service';
 import { ProjectService } from './services/project.service';
 import { SocketService } from './services/socket.service';
-import { SidebarService } from './services/sidebar.service';
 
 import { EmbeddedComponentsService, EMBEDDED_COMPONENTS } from './services/embeddedComponents.service';
 
@@ -66,7 +65,6 @@ if( process.env.NODE_ENV == 'production' )
         EmbeddedComponentsService,
         ProjectService,
         SocketService,
-        SidebarService,
         Location,
         { provide: LocationStrategy, useClass: PathLocationStrategy },
         { provide: EMBEDDED_COMPONENTS, useValue: embeddableComponents },

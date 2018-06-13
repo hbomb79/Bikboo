@@ -13,7 +13,6 @@ import { ProjectData, SidebarStatus } from '../interfaces';
 
 import { LoggerService } from '../services/logger.service';
 import { ProjectService } from '../services/project.service';
-import { SidebarService } from '../services/sidebar.service';
 import { LocationService } from '../services/location.service';
 
 const DEFAULT_PAGE:string = "overview";
@@ -40,10 +39,10 @@ const DEFAULT_PAGE:string = "overview";
         <div id="sidebar">
             <div class="options">
                 <ul id="top-level">
-                    <li><a href="#!overview" [class.active]="sidebarService.data?.currentPage == 'overview'" class="clearfix"><div [inlineSVG]="overviewImageSrc"></div><span>Overview</span></a></li>
-                    <li><a href="#!slides" [class.active]="sidebarService.data?.currentPage == 'slides'" class="clearfix"><div [inlineSVG]="editorImageSrc"></div><span>Slide Editor</span></a></li>
-                    <li><a href="#!help" [class.active]="sidebarService.data?.currentPage == 'help'" class="clearfix"><div [inlineSVG]="helpImageSrc"></div><span>Help</span></a></li>
-                    <li><a href="#!settings" [class.active]="sidebarService.data?.currentPage == 'settings'" class="clearfix"><div [inlineSVG]="settingsImageSrc"></div><span>Settings</span></a></li>
+                    <li><a href="#!overview" [class.active]="currentPage == 'overview'" class="clearfix"><div [inlineSVG]="overviewImageSrc"></div><span>Overview</span></a></li>
+                    <li><a href="#!slides" [class.active]="currentPage == 'slides'" class="clearfix"><div [inlineSVG]="editorImageSrc"></div><span>Slide Editor</span></a></li>
+                    <li><a href="#!help" [class.active]="currentPage == 'help'" class="clearfix"><div [inlineSVG]="helpImageSrc"></div><span>Help</span></a></li>
+                    <li><a href="#!settings" [class.active]="currentPage == 'settings'" class="clearfix"><div [inlineSVG]="settingsImageSrc"></div><span>Settings</span></a></li>
                 </ul>
             </div>
         </div>
@@ -115,9 +114,6 @@ export class ProjectViewerComponent implements OnInit, OnDestroy {
     protected isFetching:boolean = false;
     protected fetchError:Error;
 
-    protected sidebarActive:boolean = false;
-    protected sidebarCollapsed:boolean = false;
-
     protected onDestroy$ = new EventEmitter<void>();
 
     protected validPages:string[] = [ "overview", "slides", "help", "settings" ];
@@ -129,8 +125,6 @@ export class ProjectViewerComponent implements OnInit, OnDestroy {
             this._currentPage = page;
         else
             window.location.hash = `#!${DEFAULT_PAGE}`;
-
-        this.exportSidebarData();
     }
 
     get currentPage() : string {
@@ -145,16 +139,11 @@ export class ProjectViewerComponent implements OnInit, OnDestroy {
         private el: ElementRef,
         private logger: LoggerService,
         private projectService: ProjectService,
-        private sidebarService: SidebarService,
         private locationService: LocationService
     ) {
         // Embedded component service doesn't apply property bindings so
         // the projectID must be fetched manually from the element.
         this.projectID = el.nativeElement.attributes.project.value;
-        this.sidebarService.status.subscribe( ( status:SidebarStatus ) => {
-            this.sidebarActive = status.active;
-            this.sidebarCollapsed = status.collapsed;
-        } );
 
         this.baseUrl = window.location.pathname;
 
@@ -172,10 +161,6 @@ export class ProjectViewerComponent implements OnInit, OnDestroy {
         this.isFetching = true
         this.queryProjectInfo(() => {
             this.isFetching = false;
-            setTimeout( () => {
-                // this.sidebarService.active = true;
-                // this.sidebarService.collapsed = false;
-            }, 50 );
 
             Observable
                 .interval(60000)
@@ -186,14 +171,12 @@ export class ProjectViewerComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.sidebarService.active = false;
         this.onDestroy$.emit();
     }
 
     protected queryProjectInfo(successCb = () => {}) {
         return this.projectService.getProjectInformation( this.projectID )
             .do(meta => this.projectData = meta)
-            .do(() => this.exportSidebarData())
             .do(() => this.logger.debug( "Project data loaded", this.projectData ))
             .catch(err => {
                 this.fetchError = err;
@@ -203,12 +186,5 @@ export class ProjectViewerComponent implements OnInit, OnDestroy {
             })
             .do(data => successCb())
             .subscribe();
-    }
-
-    protected exportSidebarData() {
-        this.sidebarService.data = {
-            title: this.projectData ? this.projectData.title : '',
-            currentPage: this.currentPage
-        }
     }
 }

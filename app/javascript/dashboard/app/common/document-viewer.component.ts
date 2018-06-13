@@ -6,7 +6,6 @@ import { Title } from '@angular/platform-browser';
 
 import { LoggerService } from '../services/logger.service';
 import { DocumentService } from '../services/document.service';
-import { SidebarService } from '../services/sidebar.service';
 import { EmbeddedComponentsService } from '../services/embeddedComponents.service';
 
 import { Observable } from 'rxjs/Observable';
