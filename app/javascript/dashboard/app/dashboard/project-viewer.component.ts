@@ -21,7 +21,7 @@ const DEFAULT_PAGE:string = "overview";
 @Component({
     selector: 'app-project-viewer',
     template: `
-    <section class="main" [ngSwitch]="currentPage">
+    <section class="main {{currentPage}}">
         <div id="sidebar">
             <div class="options">
                 <ul id="top-level">
@@ -32,6 +32,8 @@ const DEFAULT_PAGE:string = "overview";
                 </ul>
             </div>
         </div>
+
+        <div *ngIf="currentPage == 'slides'" class="slide-editor-toolbar"></div>
         <div class="content" [ngSwitch]="currentPage" *ngIf="projectData && !isFetching">
             <app-project-overview [projectData]="projectData" *ngSwitchCase="'overview'"></app-project-overview>
             <app-project-slide-editor [projectData]="projectData" *ngSwitchCase="'slides'"></app-project-slide-editor>

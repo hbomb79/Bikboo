@@ -55,7 +55,7 @@ export class ProjectSlideEditorComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         // Create the jQuery callbacks and whatnot.
-        this.onResize();
+        setTimeout( () => this.onResize(), 0 );
     }
 
     ngOnDestroy() {
