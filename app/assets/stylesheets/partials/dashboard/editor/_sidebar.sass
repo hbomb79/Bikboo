@@ -4,13 +4,16 @@ $sidebar-pop-amount: 2px
 
 #sidebar
     width: $sidebar-width
-    border-right: solid 2px #c7c7c7
+    border-right: solid 1px #c7c7c7
 
     position: fixed
     top: 0
     bottom: 0
 
     padding-top: 2rem
+
+    background: #e4e4e4
+    box-shadow: inset -4px 0px 8px -8px #1d1d1d
 
     .options
         ul
@@ -36,7 +39,7 @@ $sidebar-pop-amount: 2px
 
                 &.active
                     border-right-width: 4px
-                    background: #eaeaea
+                    background: #dcdcdc
 
                 &:hover
                     -webkit-transform: translateX(-#{$sidebar-pop-amount})

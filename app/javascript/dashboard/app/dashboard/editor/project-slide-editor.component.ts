@@ -14,19 +14,38 @@ import { ProjectData } from '../../interfaces';
 import { LoggerService } from '../../services/logger.service';
 import { ProjectService } from '../../services/project.service';
 
+/*
+ * This class uses a drag and drop slide editor; I'm using jQuery-UI for this.
+ * I'm not sure if Angular has an elegant way to manage this, so for now, jQuery it is
+ *
+ * It seems so wrong... sorry.
+ */
+
+import $ from 'jquery'
+
 @Component({
     selector: 'app-project-slide-editor',
     template: `
-    <div class="modal-notice" id="slides-nyi">
-        <div class="wrapper clearfix">
-            <div id="left">
-                <img src="{{questionMarkSrc}}" alt="Question mark image"/>
-            </div>
-            <div id="right">
-                <h2>Under Construction</h2>
-                <p>Sorry! We're still working on the slide editor.</p>
-                <a href="#overview" class="button">Project Overview</a>
-            </div>
+    <div class="wrapper" id="slide-container">
+        <!-- TODO: Handle slides created
+        <div class="slide new-placeholder">
+            .content
+        </div>-->
+    </div>
+
+    <div class="slide-editor">
+        <div class="toolbar">
+            <ul class="toolbar-controls">
+                <!--<li><a href="#" class="control"></a></li>
+                <li><a href="#" class="control"></a></li>
+                <li><a href="#" class="control"></a></li>
+                <li><a href="#" class="control"></a></li>
+                <li><a href="#" class="control"></a></li>-->
+            </ul>
+        </div>
+
+        <div id="workspace">
+
         </div>
     </div>
     `,
@@ -34,6 +53,7 @@ import { ProjectService } from '../../services/project.service';
 })
 export class ProjectSlideEditorComponent implements OnInit, OnDestroy {
     protected onDestroy$ = new EventEmitter<void>();
+    protected htmlString:string = "<div class='test'><a href='#'>Foobar</a></div>";
 
     questionMarkSrc = require("images/question-mark.png");
 
@@ -44,7 +64,9 @@ export class ProjectSlideEditorComponent implements OnInit, OnDestroy {
         private projectService: ProjectService
     ) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        // Create the jQuery callbacks and whatnot.
+    }
 
     ngOnDestroy() {
         this.onDestroy$.emit();
