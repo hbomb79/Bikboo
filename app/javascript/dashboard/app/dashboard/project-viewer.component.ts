@@ -22,7 +22,7 @@ const DEFAULT_PAGE:string = "overview";
     selector: 'app-project-viewer',
     template: `
     <section class="main {{currentPage}}">
-        <div id="sidebar">
+        <div id="sidebar" [class.collapsed]="currentPage == 'slides'">
             <div class="options">
                 <ul id="top-level">
                     <li><a href="#!overview" [class.active]="currentPage == 'overview'" class="clearfix"><div [inlineSVG]="overviewImageSrc"></div><span>Overview</span></a></li>
@@ -31,9 +31,10 @@ const DEFAULT_PAGE:string = "overview";
                     <li><a href="#!settings" [class.active]="currentPage == 'settings'" class="clearfix"><div [inlineSVG]="settingsImageSrc"></div><span>Settings</span></a></li>
                 </ul>
             </div>
+
+            <div *ngIf="currentPage == 'slides'" class="sidebar-slides"></div>
         </div>
 
-        <div *ngIf="currentPage == 'slides'" class="slide-editor-toolbar"></div>
         <div class="content" [ngSwitch]="currentPage" *ngIf="projectData && !isFetching">
             <app-project-overview [projectData]="projectData" *ngSwitchCase="'overview'"></app-project-overview>
             <app-project-slide-editor [projectData]="projectData" *ngSwitchCase="'slides'"></app-project-slide-editor>
