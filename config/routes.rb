@@ -20,8 +20,15 @@ Rails.application.routes.draw do
         get '/dashboard/project/:id.json', to: 'projects#show'
         get '/projects/metadata.json', to: 'projects#get_metadata'
         get '/projects/:id.json', to: 'projects#get_project_information'
+
+        get '/help(/:category).json', to: 'help#index'
+        get '/help/:category/:page.json', to: 'help#show'
+
         resources :projects
     end
+
+    get '/help(/:category)', to: 'help#index'
+    get '/help/:category/:page', to: 'help#show'
 
     root 'landing#index'
 end

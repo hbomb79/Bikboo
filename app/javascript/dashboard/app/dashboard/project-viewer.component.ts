@@ -27,7 +27,7 @@ const DEFAULT_PAGE:string = "overview";
                 <ul id="top-level">
                     <li><a href="#!overview" [class.active]="currentPage == 'overview'" class="clearfix"><div [inlineSVG]="overviewImageSrc"></div><span>Overview</span></a></li>
                     <li><a href="#!slides" [class.active]="currentPage == 'slides'" class="clearfix"><div [inlineSVG]="editorImageSrc"></div><span>Slide Editor</span></a></li>
-                    <li><a href="#!help" [class.active]="currentPage == 'help'" class="clearfix"><div [inlineSVG]="helpImageSrc"></div><span>Help</span></a></li>
+                    <li><a href="/help/project-editor/" class="clearfix"><div [inlineSVG]="helpImageSrc"></div><span>Help</span></a></li>
                     <li><a href="#!settings" [class.active]="currentPage == 'settings'" class="clearfix"><div [inlineSVG]="settingsImageSrc"></div><span>Settings</span></a></li>
                 </ul>
             </div>
