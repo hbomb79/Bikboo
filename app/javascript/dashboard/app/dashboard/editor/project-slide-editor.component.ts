@@ -1,11 +1,8 @@
 import { Component, OnInit, Input, HostBinding,
          OnDestroy, EventEmitter, HostListener } from '@angular/core'
 
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
-import { interval } from 'rxjs/observable/interval';
+import { Observable, of, interval } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import 'rxjs/add/observable/interval';
 
 // import { trigger, style, animate, transition, query, stagger } from '@angular/animations';
 

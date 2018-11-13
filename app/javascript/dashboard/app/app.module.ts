@@ -55,7 +55,7 @@ if( process.env.NODE_ENV == 'production' )
         BrowserModule,
         BrowserAnimationsModule,
         HttpClientModule,
-        InlineSVGModule
+        InlineSVGModule.forRoot()
     ],
     providers: [
         LoggerService,
