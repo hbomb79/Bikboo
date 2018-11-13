@@ -104,16 +104,17 @@ export class DocumentService {
                     // The user has tried to access a page they don't have access to (or they've logged out in another
                     // tab). Present a button that will attempt to log them in to the requested resource if they're not
                     // logged in already.
-                    if( this.currentUser ) {
-                        doc_response.content = doc_response.content.replace(/ERROR/g, `Your user account is not privelleged enough to access this protected resource as elevated privelleges are required.<br><br>Ensure you're logged in to the correct account.`);
-                    } else {
-                        doc_response.content = doc_response.content.replace(/ERROR/g, `Your request to access a protected resource was rejected because you're not logged in. Click the button below to login and continue to the specified resource.<br><br><a class="button sub" href="/">Cancel</a><a class="button no-follow" href="/signin?continue=${UrlWithoutExtension}" style="margin-left: 1rem;">Login and continue</a>`);
-                    }
+                    doc_response.content = doc_response.content.replace(/ERROR/g,
+                        this.currentUser
+                        ? `Your user account is not privelleged enough to access this protected resource as elevated privelleges are required.<br><br>Ensure you're logged in to the correct account.`
+                        : `Your request to access a protected resource was rejected because you're not logged in. Click the button below to login and continue to the specified resource.<br><br><a class="button sub" href="/">Cancel</a><a class="button no-follow" href="/signin?continue=${UrlWithoutExtension}" style="margin-left: 1rem;">Login and continue</a>`
+                    );
                 } else {
                     doc_response.content = doc_response.content.replace(/ERROR/g, ERROR_CONTENT_MAP[error.status] || "Unknown exception occurred.");
                 }
 
                 return of( { type: HttpEventType.Response, body: doc_response } as HttpEvent<any> );
             })
+        );
     }
 }
