@@ -29,7 +29,7 @@ staging:
     stage: deploy
     environment: staging
     script:
-        - dpl --provider=heroku --app=staging-dyno --api-key=$HEROKU_STAGING_API_KEY
+        - dpl --provider=heroku --app=bikboo-staging --api-key=$HEROKU_STAGING_API_KEY
     only:
         - staging
     dependencies:
